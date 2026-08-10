@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<title>Study Time Tracker</title>
+<meta name="omelette-owns-print" content="1">
+<link rel="stylesheet" href="https://cloudflare.com">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+--bg:#f2efe9;--bg-2:#eae6de;--surface:#fbfaf7;--field:#f6f4ef;--sheet:#ffffff;
+--ink:#1c1a17;--ink-2:#4a463f;--ink-3:#6f6a61;--muted:#8a8377;--muted-2:#a49d90;--faint:#c4bdb0;--faint-2:#b9b2a6;
+--onink:#f2efe9;--onink-soft:#b6ada0;
+--line:rgba(28,26,23,0.14);--line-2:rgba(28,26,23,0.10);--line-3:rgba(28,26,23,0.09);--line-4:rgba(28,26,23,0.12);
+--hair:rgba(28,26,23,0.06);--hair-2:rgba(28,26,23,0.055);--hair-3:rgba(28,26,23,0.05);
+--wash:rgba(28,26,23,0.06);--wash-2:rgba(28,26,23,0.03);--wash-3:rgba(28,26,23,0.025);--wash-4:rgba(28,26,23,0.07);
+--dash:rgba(28,26,23,0.16);--dash-2:rgba(28,26,23,0.14);
+--study:#3f6b57;--break:#b0703f;--danger:#a1524f;--rule:#1c1a17;
+--shadow:0 1px 2px rgba(28,26,23,0.04);--shadow-2:0 2px 14px rgba(28,26,23,0.07);
+}
+[data-theme="dark"]{
+--bg:#141311;--bg-2:#1a1917;--surface:#1e1d1a;--field:#242320;--sheet:#1b1a18;
+--ink:#ece7dd;--ink-2:#cbc5b9;--ink-3:#a8a195;--muted:#8b857a;--muted-2:#736d63;--faint:#5b564e;--faint-2:#635e56;
+--onink:#141311;--onink-soft:rgba(20,19,17,0.62);
+--line:rgba(236,231,221,0.18);--line-2:rgba(236,231,221,0.13);--line-3:rgba(236,231,221,0.11);--line-4:rgba(236,231,221,0.15);
+--hair:rgba(236,231,221,0.08);--hair-2:rgba(236,231,221,0.075);--hair-3:rgba(236,231,221,0.07);
+--wash:rgba(236,231,221,0.08);--wash-2:rgba(236,231,221,0.05);--wash-3:rgba(236,231,221,0.045);--wash-4:rgba(236,231,221,0.09);
+--dash:rgba(236,231,221,0.2);--dash-2:rgba(236,231,221,0.18);
+--study:#72ab8e;--break:#d2965f;--danger:#d08079;--rule:#ece7dd;
+--shadow:0 1px 2px rgba(0,0,0,0.35);--shadow-2:0 2px 18px rgba(0,0,0,0.45);
+}
+html,body{margin:0;padding:0;height:100%;background:var(--bg);}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;}
+*{box-sizing:border-box;}
+a{color:var(--study);text-decoration:none;}
+a:hover{color:var(--ink);text-decoration:underline;}
+button{font-family:inherit;}
+input,select,textarea{font-family:inherit;color:inherit;}
+input[type=time]{font-family:'IBM Plex Mono',monospace;}
+[data-theme="dark"] input[type=time],[data-theme="dark"] select{color-scheme:dark;}
+::selection{background:var(--wash-4);}
+[data-print-only]{display:none;}
+@media print{
+  html,body{height:auto !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  [data-print-hide]{display:none !important;}
+  [data-print-only]{display:block !important;}
+  [data-app-root]{display:block !important;height:auto !important;overflow:visible !important;background:transparent !important;}
+  [data-main]{overflow:visible !important;padding:0 !important;display:block !important;}
+  [data-sheet-wrap]{padding:0 !important;display:block !important;}
+  #report-sheet{margin:0 !important;border:none !important;border-radius:0 !important;box-shadow:none !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</helmet>
+<div data-app-root="" style="display:flex;height:100vh;overflow:hidden;background:var(--bg);">
+
+  <aside data-print-hide="" style="width:252px;flex:none;display:flex;flex-direction:column;background:var(--bg-2);border-right:1px solid var(--line-3);overflow-y:auto;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:22px 18px 16px 20px;">
+      <div>
+        <div style="font-family:'Newsreader',serif;font-size:21px;font-weight:400;letter-spacing:-0.01em;line-height:1.1;">Study Log</div>
+        <div style="margin-top:4px;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">Daily report</div>
+      </div>
+      <button onClick="{{ toggleTheme }}" title="{{ themeTitle }}" style="flex:none;width:28px;height:28px;border:1px solid var(--line-3);border-radius:8px;background:transparent;color:var(--ink-3);font-size:13px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:var(--wash);color:var(--ink);">{{ themeIcon }}</button>
+    </div>
+
+    <div style="padding:0 16px 14px;">
+      <div style="display:flex;align-items:center;gap:6px;background:var(--field);border:1px solid var(--line-3);border-radius:8px;padding:6px 8px;">
+        <button onClick="{{ prevDay }}" style="flex:none;width:24px;height:24px;border:none;border-radius:6px;background:transparent;color:var(--ink-3);font-size:14px;line-height:1;cursor:pointer;" style-hover="background:var(--wash-4);color:var(--ink);">‹</button>
+        <div style="flex:1;text-align:center;font-size:12.5px;font-weight:500;letter-spacing:-0.01em;">{{ dateShort }}</div>
+        <button onClick="{{ nextDay }}" style="flex:none;width:24px;height:24px;border:none;border-radius:6px;background:transparent;color:var(--ink-3);font-size:14px;line-height:1;cursor:pointer;" style-hover="background:var(--wash-4);color:var(--ink);">›</button>
+      </div>
+    </div>
+
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:0 12px;">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="3">
+        <button onClick="{{ n.go }}" style="display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:none;border-radius:7px;padding:8px 10px;font-size:13px;font-weight:500;letter-spacing:-0.01em;cursor:pointer;background:{{ n.bg }};color:{{ n.fg }};">
+          <span style="width:5px;height:5px;border-radius:50%;flex:none;background:{{ n.dot }};"></span>
+          <span>{{ n.label }}</span>
+        </button>
+      </sc-for>
+    </nav>
+
+    <div style="margin:20px 20px 0;padding-top:16px;border-top:1px solid var(--line-3);display:flex;flex-direction:column;gap:11px;">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;">
+        <span style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);">Study</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500;color:var(--study);">{{ studyLabel }}</span>
+      </div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;">
+        <span style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);">Break</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500;color:var(--break);">{{ breakLabel }}</span>
+      </div>
+    </div>
+
+    <div style="margin:22px 20px 0;padding-top:16px;border-top:1px solid var(--line-3);">
+      <div style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Subjects</div>
+      <div style="display:flex;flex-direction:column;gap:1px;">
+        <sc-for list="{{ subjectList }}" as="s" hint-placeholder-count="3">
+          <div>
+            <sc-if value="{{ s.isRow }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:6px;" style-hover="background:var(--wash-3);">
+                <span style="width:7px;height:7px;border-radius:2px;flex:none;background:{{ s.color }};"></span>
+                <button onClick="{{ s.startEdit }}" title="Rename or recolour" style="flex:1;min-width:0;text-align:left;border:none;background:transparent;padding:0;font-size:12px;line-height:1.3;letter-spacing:-0.01em;color:var(--ink);cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" style-hover="color:var(--study);">{{ s.name }}</button>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);flex:none;">{{ s.mins }}</span>
+                <button onClick="{{ s.askDelete }}" title="Remove subject" style="flex:none;width:16px;height:16px;border:none;background:transparent;color:var(--faint-2);font-size:13px;line-height:1;cursor:pointer;padding:0;" style-hover="color:var(--danger);">×</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ s.isEdit }}">
+              <div style="border:1px solid var(--line-4);border-radius:8px;padding:8px;margin:3px 0;display:flex;flex-direction:column;gap:8px;background:var(--surface);">
+                <form onSubmit="{{ s.saveEdit }}" style="display:flex;gap:5px;">
+                  <input value="{{ s.editName }}" onChange="{{ s.onEditName }}" autoFocus="{{ true }}" style="flex:1;min-width:0;border:1px solid var(--line-4);border-radius:6px;background:var(--field);padding:5px 7px;font-size:12px;outline:none;" style-focus="border-color:var(--study);">
+                  <button type="submit" style="flex:none;border:1px solid var(--study);border-radius:6px;background:var(--study);color:#fff;padding:0 9px;font-size:11px;font-weight:500;cursor:pointer;">Save</button>
+                </form>
+                <div style="display:flex;gap:5px;">
+                  <sc-for list="{{ s.swatches }}" as="w" hint-placeholder-count="7">
+                    <button onClick="{{ w.pick }}" title="Set colour" style="width:17px;height:17px;border-radius:4px;padding:0;cursor:pointer;background:{{ w.color }};border:1.5px solid {{ w.ring }};"></button>
+                  </sc-for>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <button onClick="{{ s.cancelEdit }}" style="border:none;background:transparent;padding:0;font-size:10.5px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--ink);">Done</button>
+                  <button onClick="{{ s.askDelete }}" style="margin-left:auto;border:none;background:transparent;padding:0;font-size:10.5px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--danger);">Remove</button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ s.isConfirm }}">
+              <div style="border:1px solid var(--danger);border-radius:8px;padding:9px 10px;margin:3px 0;display:flex;flex-direction:column;gap:9px;">
+                <div style="font-size:11px;line-height:1.5;color:var(--ink-2);">Remove {{ s.name }}? Archiving hides it from the timer but keeps past entries readable.</div>
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
+                  <button onClick="{{ s.doArchive }}" style="border:1px solid var(--line-4);border-radius:6px;background:var(--field);color:var(--ink-2);padding:4px 9px;font-size:10.5px;font-weight:500;cursor:pointer;" style-hover="background:var(--ink);color:var(--onink);border-color:var(--ink);">Archive</button>
+                  <button onClick="{{ s.doDelete }}" style="border:1px solid var(--danger);border-radius:6px;background:transparent;color:var(--danger);padding:4px 9px;font-size:10.5px;font-weight:500;cursor:pointer;" style-hover="background:var(--danger);color:#fff;">Delete</button>
+                  <button onClick="{{ s.cancelDelete }}" style="margin-left:auto;border:none;background:transparent;padding:0 2px;font-size:10.5px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--ink);">Cancel</button>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ noSubjects }}">
+        <div style="padding:3px 6px;font-size:11px;line-height:1.5;color:var(--muted-2);">No subjects yet — add your first below.</div>
+      </sc-if>
+      <sc-if value="{{ hasArchived }}">
+        <button onClick="{{ toggleArchived }}" style="margin-top:9px;align-self:flex-start;border:none;background:transparent;padding:0 6px;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted-2);cursor:pointer;" style-hover="color:var(--ink);">{{ archivedLabel }}</button>
+      </sc-if>
+      <sc-if value="{{ showArchived }}">
+        <div style="display:flex;flex-direction:column;gap:1px;margin-top:6px;">
+          <sc-for list="{{ archivedList }}" as="s" hint-placeholder-count="1">
+            <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:6px;" style-hover="background:var(--wash-3);">
+              <span style="width:7px;height:7px;border-radius:2px;flex:none;background:{{ s.color }};opacity:0.6;"></span>
+              <span style="flex:1;min-width:0;font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ s.name }}</span>
+              <button onClick="{{ s.restore }}" style="flex:none;border:none;background:transparent;padding:0;font-size:10px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--study);">Restore</button>
+              <button onClick="{{ s.doDelete }}" title="Delete permanently" style="flex:none;width:14px;height:14px;border:none;background:transparent;color:var(--faint-2);font-size:12px;line-height:1;cursor:pointer;padding:0;" style-hover="color:var(--danger);">×</button>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <form onSubmit="{{ addSubject }}" style="display:flex;gap:5px;margin-top:9px;">
+        <input value="{{ newSubject }}" onChange="{{ onNewSubject }}" placeholder="Add subject" style="flex:1;min-width:0;border:1px solid var(--line-4);border-radius:6px;background:var(--field);padding:6px 8px;font-size:12px;outline:none;" style-focus="border-color:var(--study);">
+        <button type="submit" style="flex:none;border:1px solid var(--line-4);border-radius:6px;background:var(--field);color:var(--ink-2);width:28px;font-size:14px;line-height:1;cursor:pointer;" style-hover="background:var(--study);color:#fff;border-color:var(--study);">+</button>
+      </form>
+    </div>
+
+    <div style="margin-top:auto;padding:20px;display:flex;flex-direction:column;gap:9px;">
+      <sc-if value="{{ cloudOn }}" hint-placeholder-val="{{ true }}">
+        
+      </sc-if>
+      
+    </div>
+  </aside>
+
+  <main data-main="" style="flex:1;min-width:0;overflow-y:auto;display:flex;flex-direction:column;">
+
+    <div data-print-hide="" style="flex:none;display:flex;align-items:stretch;gap:2px;padding:0 40px;background:var(--bg-2);border-bottom:1px solid var(--line-3);">
+      <sc-for list="{{ profileTabs }}" as="p" hint-placeholder-count="1">
+        <button onClick="{{ p.go }}" style="border:none;border-radius:8px 8px 0 0;border-bottom:2px solid {{ p.underline }};background:{{ p.bg }};color:{{ p.fg }};padding:12px 16px 10px;font-size:12.5px;font-weight:500;letter-spacing:-0.01em;cursor:pointer;" style-hover="color:var(--ink);">{{ p.name }}</button>
+      </sc-for>
+      <sc-if value="{{ noAddingProfile }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ openAddProfile }}" title="Add profile" style="align-self:center;margin-left:6px;width:24px;height:24px;flex:none;border:1px solid var(--line-3);border-radius:7px;background:transparent;color:var(--ink-3);font-size:14px;line-height:1;cursor:pointer;" style-hover="background:var(--wash);color:var(--ink);">+</button>
+      </sc-if>
+      <sc-if value="{{ addingProfile }}">
+        <form onSubmit="{{ addProfile }}" style="display:flex;align-items:center;gap:5px;padding:8px 0 8px 8px;">
+          <input value="{{ newProfile }}" onChange="{{ onNewProfile }}" autoFocus="{{ true }}" placeholder="Name" style="width:120px;border:1px solid var(--line-4);border-radius:6px;background:var(--field);padding:5px 8px;font-size:12px;outline:none;" style-focus="border-color:var(--study);">
+          <button type="submit" style="border:1px solid var(--study);border-radius:6px;background:var(--study);color:#fff;padding:5px 10px;font-size:11px;font-weight:500;cursor:pointer;">Add</button>
+          <button type="button" onClick="{{ cancelAddProfile }}" style="border:none;background:transparent;padding:0 2px;font-size:11px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--ink);">Cancel</button>
+        </form>
+      </sc-if>
+      <div style="flex:1;"></div>
+      <sc-if value="{{ notRenaming }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button onClick="{{ openRename }}" style="border:none;background:transparent;padding:0;font-size:11px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--ink);">Rename</button>
+          <sc-if value="{{ canRemoveProfile }}">
+            <button onClick="{{ askRemoveProfile }}" style="border:none;background:transparent;padding:0;font-size:11px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--danger);">Remove</button>
+          </sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ renamingProfile }}">
+        <form onSubmit="{{ saveRename }}" style="display:flex;align-items:center;gap:5px;padding:8px 0;">
+          <input value="{{ profileName }}" onChange="{{ onProfileName }}" autoFocus="{{ true }}" style="width:130px;border:1px solid var(--line-4);border-radius:6px;background:var(--field);padding:5px 8px;font-size:12px;outline:none;" style-focus="border-color:var(--study);">
+          <button type="submit" style="border:1px solid var(--study);border-radius:6px;background:var(--study);color:#fff;padding:5px 10px;font-size:11px;font-weight:500;cursor:pointer;">Save</button>
+          <button type="button" onClick="{{ cancelRename }}" style="border:none;background:transparent;padding:0 2px;font-size:11px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--ink);">Cancel</button>
+        </form>
+      </sc-if>
+    </div>
+    <sc-if value="{{ confirmProfileOpen }}">
+      <div data-print-hide="" style="flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:11px 40px;background:var(--field);border-bottom:1px solid var(--line-3);">
+        <span style="font-size:12px;line-height:1.5;color:var(--ink-2);">Remove {{ activeProfile }} and everything logged under it? This cannot be undone.</span>
+        <button onClick="{{ removeProfile }}" style="border:1px solid var(--danger);border-radius:7px;background:transparent;color:var(--danger);padding:5px 11px;font-size:11.5px;font-weight:500;cursor:pointer;" style-hover="background:var(--danger);color:#fff;">Remove profile</button>
+        <button onClick="{{ cancelRemoveProfile }}" style="border:none;background:transparent;padding:0;font-size:11.5px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--ink);">Cancel</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isTrack }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:920px;width:100%;margin:0 auto;padding:34px 40px 60px;display:flex;flex-direction:column;gap:26px;">
+
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;">
+          <div>
+            <h1 style="margin:0;font-family:'Newsreader',serif;font-size:30px;font-weight:400;letter-spacing:-0.015em;line-height:1.1;">{{ dateLong }}</h1>
+            <div style="margin-top:5px;font-size:12.5px;color:var(--muted);">{{ trackSummary }}</div>
+          </div>
+          <button onClick="{{ goReport }}" style="flex:none;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink-2);padding:8px 14px;font-size:12.5px;font-weight:500;cursor:pointer;" style-hover="background:var(--ink);color:var(--onink);border-color:var(--ink);">View report</button>
+        </div>
+
+        <section style="background:var(--surface);border:1px solid var(--line-3);border-radius:14px;padding:24px 26px;box-shadow:var(--shadow);">
+          <div style="display:flex;gap:6px;margin-bottom:20px;">
+            <sc-for list="{{ modeBtns }}" as="m" hint-placeholder-count="2">
+              <button onClick="{{ m.go }}" style="border-radius:8px;padding:7px 15px;font-size:12.5px;font-weight:500;letter-spacing:-0.01em;cursor:pointer;border:1px solid {{ m.border }};background:{{ m.bg }};color:{{ m.fg }};">{{ m.label }}</button>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:30px;flex-wrap:wrap;">
+            <div style="flex:none;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:52px;font-weight:400;letter-spacing:-0.03em;line-height:1;color:{{ clockColor }};">{{ clock }}</div>
+              <div style="margin-top:8px;font-size:12px;color:var(--muted);">{{ clockCaption }}</div>
+            </div>
+            <button onClick="{{ toggleRun }}" disabled="{{ runDisabled }}" style="flex:none;border:none;border-radius:10px;padding:14px 30px;font-size:14px;font-weight:600;letter-spacing:-0.01em;cursor:{{ runBtnCursor }};background:{{ runBtnBg }};color:{{ runBtnFg }};" style-hover="filter:brightness(1.08);">{{ runBtnLabel }}</button>
+          </div>
+
+          <div style="margin-top:22px;padding-top:20px;border-top:1px solid var(--hair);display:flex;flex-direction:column;gap:14px;">
+            <sc-if value="{{ runShowSubjects }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);width:66px;flex:none;">Subject</span>
+                <sc-for list="{{ runSubjectChips }}" as="c" hint-placeholder-count="3">
+                  <button onClick="{{ c.go }}" style="border-radius:7px;padding:6px 11px;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:7px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};">
+                    <span style="width:6px;height:6px;border-radius:2px;background:{{ c.dot }};"></span>{{ c.name }}
+                  </button>
+                </sc-for>
+                <sc-if value="{{ noSubjects }}">
+                  <span style="font-size:12px;color:var(--muted-2);">Add a subject in the sidebar to start a study timer.</span>
+                </sc-if>
+              </div>
+            </sc-if>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);width:66px;flex:none;">Session</span>
+              <sc-for list="{{ runSessionChips }}" as="c" hint-placeholder-count="4">
+                <button onClick="{{ c.go }}" style="border-radius:7px;padding:6px 11px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};">{{ c.name }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </section>
+
+        <section style="background:var(--surface);border:1px solid var(--line-3);border-radius:14px;padding:20px 26px;">
+          <div style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Add manually</div>
+          <form onSubmit="{{ addManual }}" style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;">
+            <label style="display:flex;flex-direction:column;gap:5px;">
+              <span style="font-size:10.5px;color:var(--muted);">Type</span>
+              <select value="{{ manType }}" onChange="{{ onManType }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
+                <option value="study">Study</option>
+                <option value="break">Break</option>
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:170px;">
+              <span style="font-size:10.5px;color:var(--muted);">Subject</span>
+              <select value="{{ manSubject }}" onChange="{{ onManSubject }}" disabled="{{ manSubjectDisabled }}" style="width:100%;border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
+                <sc-for list="{{ subjectList }}" as="s" hint-placeholder-count="3">
+                  <option value="{{ s.id }}">{{ s.name }}</option>
+                </sc-for>
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:5px;">
+              <span style="font-size:10.5px;color:var(--muted);">Session</span>
+              <select value="{{ manSession }}" onChange="{{ onManSession }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
+                <option value="auto">Auto</option>
+                <option value="morning">Morning</option>
+                <option value="afternoon">Afternoon</option>
+                <option value="night">Night</option>
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:5px;">
+              <span style="font-size:10.5px;color:var(--muted);">From</span>
+              <input type="time" value="{{ manFrom }}" onChange="{{ onManFrom }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:6px 9px;font-size:12.5px;outline:none;">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:5px;">
+              <span style="font-size:10.5px;color:var(--muted);">To</span>
+              <input type="time" value="{{ manTo }}" onChange="{{ onManTo }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:6px 9px;font-size:12.5px;outline:none;">
+            </label>
+            <button type="submit" style="border:none;border-radius:7px;background:var(--ink);color:var(--onink);padding:8px 16px;font-size:12.5px;font-weight:500;cursor:pointer;" style-hover="background:var(--study);color:#fff;">Add entry</button>
+          </form>
+          <sc-if value="{{ manError }}">
+            <div style="margin-top:10px;font-size:11.5px;color:var(--danger);">{{ manError }}</div>
+          </sc-if>
+        </section>
+
+        <section>
+          <div style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Entries</div>
+          <sc-if value="{{ hasEntries }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;">
+              <sc-for list="{{ trackRows }}" as="r" hint-placeholder-count="5">
+                <div>
+                  <sc-if value="{{ r.isHead }}">
+                    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 2px 7px;border-bottom:1px solid var(--line-4);">
+                      <span style="font-family:'Newsreader',serif;font-size:16px;letter-spacing:-0.01em;">{{ r.name }}</span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--muted);">{{ r.meta }}</span>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ r.isEntry }}">
+                    <div style="display:flex;align-items:center;gap:14px;padding:9px 2px;border-bottom:1px solid var(--hair);" style-hover="background:var(--wash-3);">
+                      <span style="width:3px;height:22px;border-radius:2px;flex:none;background:{{ r.color }};"></span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-2);flex:none;width:106px;">{{ r.range }}</span>
+                      <span style="flex:1;min-width:0;font-size:13px;letter-spacing:-0.01em;color:{{ r.nameColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.name }}</span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;flex:none;color:var(--ink);">{{ r.dur }}</span>
+                      <button onClick="{{ r.remove }}" style="flex:none;width:20px;height:20px;border:none;background:transparent;color:var(--faint);font-size:15px;line-height:1;cursor:pointer;padding:0;" style-hover="color:var(--danger);">×</button>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noEntries }}">
+            <div style="padding:34px;text-align:center;border:1px dashed var(--dash-2);border-radius:12px;color:var(--muted-2);font-size:13px;">Nothing logged yet. Start the timer or add a manual entry.</div>
+          </sc-if>
+        </section>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isReport }}">
+      <div style="width:100%;padding:0;">
+        <div data-print-hide="" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:22px 40px;border-bottom:1px solid var(--line-3);background:var(--bg);position:sticky;top:0;z-index:5;">
+          <div>
+            <div style="font-size:13px;font-weight:600;letter-spacing:-0.01em;">Report sheet</div>
+            <div style="margin-top:2px;font-size:11.5px;color:var(--muted);">Trimmed to your logged time — screenshot the sheet or print it.</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button onClick="{{ goTrack }}" style="border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink-2);padding:8px 14px;font-size:12.5px;font-weight:500;cursor:pointer;" style-hover="background:var(--wash);">Back to tracking</button>
+            <button onClick="{{ doPrint }}" style="border:none;border-radius:8px;background:var(--ink);color:var(--onink);padding:8px 16px;font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--study);color:#fff;">Print / Save PDF</button>
+          </div>
+        </div>
+
+        <div data-sheet-wrap="" style="padding:34px 40px 70px;display:flex;justify-content:center;">
+          <div id="report-sheet" style="width:{{ sheetW }};max-width:100%;background:{{ paper }};border:1px solid var(--line-2);border-radius:4px;box-shadow:var(--shadow-2);padding:44px 46px 38px;">
+
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding-bottom:18px;border-bottom:1.5px solid var(--rule);">
+              <div>
+                <div style="font-family:'Newsreader',serif;font-size:27px;font-weight:400;letter-spacing:-0.015em;line-height:1.1;">Daily Study Report</div>
+                <sc-if value="{{ hasOwner }}">
+                  <div style="margin-top:5px;font-size:11.5px;color:var(--muted);letter-spacing:0.02em;">{{ owner }}</div>
+                </sc-if>
+              </div>
+              <div style="text-align:right;flex:none;">
+                <div style="font-size:13px;font-weight:500;letter-spacing:-0.01em;">{{ dateLong }}</div>
+                <div style="margin-top:3px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">{{ dateKey }}</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:34px;padding:22px 0 20px;border-bottom:1px solid var(--line-2);">
+              <div style="flex:1;">
+                <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Study</div>
+                <div style="margin-top:6px;font-family:'Newsreader',serif;font-size:34px;line-height:1;letter-spacing:-0.02em;color:var(--study);">{{ studyLabel }}</div>
+              </div>
+              <div style="flex:1;">
+                <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Break</div>
+                <div style="margin-top:6px;font-family:'Newsreader',serif;font-size:34px;line-height:1;letter-spacing:-0.02em;color:var(--break);">{{ breakLabel }}</div>
+              </div>
+              <sc-if value="{{ showFocus }}">
+                <div style="flex:1;">
+                  <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Focus</div>
+                  <div style="margin-top:6px;font-family:'Newsreader',serif;font-size:34px;line-height:1;letter-spacing:-0.02em;">{{ focusLabel }}</div>
+                </div>
+              </sc-if>
+              <div style="flex:1.15;">
+                <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Streak</div>
+                <div style="margin-top:6px;font-family:'Newsreader',serif;font-size:34px;line-height:1;letter-spacing:-0.02em;">{{ streakLabel }}</div>
+                <div style="margin-top:6px;font-size:11px;color:var(--ink-3);line-height:1.4;">{{ deltaLabel }}</div>
+              </div>
+            </div>
+
+            <sc-if value="{{ hasStudy }}">
+              <div style="padding:20px 0 18px;border-bottom:1px solid var(--line-2);">
+                <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">By subject</div>
+                <div style="display:flex;height:9px;border-radius:5px;overflow:hidden;background:var(--wash);margin-bottom:16px;">
+                  <sc-for list="{{ subjectBars }}" as="b" hint-placeholder-count="3">
+                    <div style="width:{{ b.pct }};background:{{ b.color }};"></div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:9px;">
+                  <sc-for list="{{ subjectBars }}" as="b" hint-placeholder-count="3">
+                    <div style="display:flex;align-items:center;gap:11px;">
+                      <span style="width:8px;height:8px;border-radius:2px;flex:none;background:{{ b.color }};"></span>
+                      <span style="flex:1;min-width:0;font-size:12.5px;letter-spacing:-0.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ b.name }}</span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);flex:none;width:44px;text-align:right;">{{ b.pct }}</span>
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;flex:none;width:64px;text-align:right;">{{ b.label }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="padding:20px 0 18px;border-bottom:1px solid var(--line-2);">
+              <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Sessions</div>
+              <div style="display:flex;align-items:baseline;gap:12px;padding-bottom:7px;border-bottom:1px solid var(--line-2);font-size:9.5px;letter-spacing:0.11em;text-transform:uppercase;color:var(--muted-2);">
+                <span style="flex:1;">Session</span>
+                <span style="flex:none;width:66px;text-align:right;">Study</span>
+                <span style="flex:none;width:66px;text-align:right;">Break</span>
+                <span style="flex:none;width:150px;text-align:right;">Covered</span>
+              </div>
+              <sc-for list="{{ sessionRows }}" as="s" hint-placeholder-count="3">
+                <div style="display:flex;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--hair-2);">
+                  <span style="flex:1;font-size:12.5px;letter-spacing:-0.01em;color:{{ s.nameColor }};">{{ s.name }}</span>
+                  <span style="flex:none;width:66px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:{{ s.studyColor }};">{{ s.study }}</span>
+                  <span style="flex:none;width:66px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:{{ s.breakColor }};">{{ s.brk }}</span>
+                  <span style="flex:none;width:150px;text-align:right;font-size:11px;color:var(--muted);line-height:1.35;">{{ s.covered }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ hasEntries }}">
+              <div style="padding:20px 0 18px;border-bottom:1px solid var(--line-2);">
+                <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Log</div>
+                <sc-for list="{{ logRows }}" as="r" hint-placeholder-count="6">
+                  <div style="display:flex;align-items:center;gap:12px;padding:6.5px 0;border-bottom:1px solid var(--hair-3);">
+                    <span style="width:3px;height:15px;border-radius:2px;flex:none;background:{{ r.color }};"></span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-2);flex:none;width:100px;">{{ r.range }}</span>
+                    <span style="flex:1;min-width:0;font-size:12.5px;letter-spacing:-0.01em;color:{{ r.nameColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.name }}</span>
+                    <span style="flex:none;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted-2);width:74px;text-align:right;">{{ r.sess }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;flex:none;width:58px;text-align:right;">{{ r.dur }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <div style="padding:18px 0 6px;">
+              <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:9px;">Notes</div>
+              <textarea data-print-hide="" value="{{ notes }}" onChange="{{ onNotes }}" rows="3" placeholder="How did today go?" style="width:100%;border:1px dashed var(--dash);border-radius:7px;background:transparent;padding:9px 11px;font-size:12.5px;line-height:1.6;resize:vertical;outline:none;" style-focus="border-color:var(--study);border-style:solid;"></textarea>
+              <div data-print-only="" style="font-size:12.5px;line-height:1.65;white-space:pre-wrap;color:var(--ink-2);">{{ notes }}</div>
+            </div>
+
+            <div style="margin-top:18px;padding-top:12px;border-top:1px solid var(--line-2);display:flex;justify-content:space-between;gap:12px;font-size:10px;letter-spacing:0.05em;color:var(--muted-2);">
+              <span>{{ entryCountLabel }}</span>
+              <span>Study Log</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isHistory }}">
+      <div style="max-width:920px;width:100%;margin:0 auto;padding:34px 40px 60px;display:flex;flex-direction:column;gap:26px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+          <h1 style="margin:0;font-family:'Newsreader',serif;font-size:30px;font-weight:400;letter-spacing:-0.015em;">{{ monthLabel }}</h1>
+          <div style="display:flex;gap:6px;">
+            <button onClick="{{ prevMonth }}" style="width:32px;height:32px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink-2);font-size:15px;line-height:1;cursor:pointer;" style-hover="background:var(--wash);">‹</button>
+            <button onClick="{{ nextMonth }}" style="width:32px;height:32px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink-2);font-size:15px;line-height:1;cursor:pointer;" style-hover="background:var(--wash);">›</button>
+          </div>
+        </div>
+
+        <div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px;">
+            <div style="font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted-2);text-align:center;">Mon</div>
+            <div style="font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted-2);text-align:center;">Tue</div>
+            <div style="font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted-2);text-align:center;">Wed</div>
+            <div style="font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted-2);text-align:center;">Thu</div>
+            <div style="font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted-2);text-align:center;">Fri</div>
+            <div style="font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted-2);text-align:center;">Sat</div>
+            <div style="font-size:9.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted-2);text-align:center;">Sun</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;">
+            <sc-for list="{{ calCells }}" as="c" hint-placeholder-count="42">
+              <button onClick="{{ c.go }}" style="display:flex;flex-direction:column;justify-content:space-between;height:72px;padding:8px;border-radius:9px;cursor:pointer;text-align:left;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};" style-hover="border-color:var(--study);">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:{{ c.weight }};">{{ c.day }}</span>
+                <span style="display:flex;flex-direction:column;gap:3px;">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:{{ c.metaColor }};">{{ c.meta }}</span>
+                  <span style="display:block;height:3px;border-radius:2px;background:var(--wash-4);">
+                    <span style="display:block;height:3px;border-radius:2px;width:{{ c.pct }};background:{{ c.barColor }};"></span>
+                  </span>
+                </span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Recent days</div>
+          <sc-if value="{{ hasRecent }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;">
+              <sc-for list="{{ recentDays }}" as="d" hint-placeholder-count="5">
+                <button onClick="{{ d.go }}" style="display:flex;align-items:center;gap:16px;width:100%;text-align:left;padding:11px 6px;border:none;border-bottom:1px solid var(--hair);background:transparent;cursor:pointer;color:var(--ink);" style-hover="background:var(--wash-2);">
+                  <span style="flex:none;width:150px;font-size:13px;letter-spacing:-0.01em;">{{ d.label }}</span>
+                  <span style="flex:1;min-width:0;display:flex;height:7px;border-radius:4px;overflow:hidden;background:var(--wash);">
+                    <span style="display:block;height:7px;width:{{ d.studyPct }};background:var(--study);"></span>
+                    <span style="display:block;height:7px;width:{{ d.breakPct }};background:var(--break);"></span>
+                  </span>
+                  <span style="flex:none;width:74px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--study);">{{ d.study }}</span>
+                  <span style="flex:none;width:64px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--break);">{{ d.brk }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noRecent }}">
+            <div style="padding:30px;text-align:center;border:1px dashed var(--dash-2);border-radius:12px;color:var(--muted-2);font-size:13px;">No history yet.</div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;reportWidth&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:720,&quot;min&quot;:620,&quot;max&quot;:900,&quot;step&quot;:10,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Report sheet&quot;},&quot;paperTint&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ffffff&quot;,&quot;options&quot;:[&quot;#ffffff&quot;,&quot;#fcfbf7&quot;,&quot;#faf6ec&quot;,&quot;#f7f6f3&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Report sheet&quot;},&quot;showFocus&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Report sheet&quot;},&quot;supabaseUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://bdrixaegmrxuoajldrev.supabase.co&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Cloud sync&quot;},&quot;supabaseAnonKey&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;sb_publishable_md8PHNykUVYHuLinPBg41g_ri41uDEv&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Cloud sync&quot;}}">
+class Component extends DCLogic {
+  PAL = ['#4a6fa5','#a2683f','#4f7d68','#8a5a8f','#a1524f','#5c6a8a','#6b7a3f'];
+  SK = ['morning','afternoon','night'];
+  SN = { morning:'Morning Session', afternoon:'Afternoon Session', night:'Night Session' };
+  SHORT = { morning:'Morning', afternoon:'Afternoon', night:'Night' };
+  KEY = 'studylog.v2';
+  LEGACY = 'studylog.v1';
+
+  state = {
+    view: 'track',
+    theme: 'light',
+    date: this.dk(new Date()),
+    month: this.dk(new Date()).slice(0, 7),
+    profiles: [{ id: 'p1', name: 'Me' }],
+    activeId: 'p1',
+    store: { p1: { subjects: [], days: {} } },
+    sync: 'off', syncMsg: '', updatedAt: 0,
+    running: null,
+    now: Date.now(),
+    runType: 'study', runSubject: '', runSession: 'auto',
+    manType: 'study', manSubject: '', manSession: 'auto', manFrom: '', manTo: '',
+    newSubject: '', manError: '',
+    editSubj: null, editName: '', confirmSubj: null, showArchived: false,
+    addingProfile: false, newProfile: '', renamingProfile: false, profileName: '', confirmProfile: null
+  };
+
+  dk(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  parseKey(k) { const p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  hhmm(m) { const t = ((Math.floor(m) % 1440) + 1440) % 1440; return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
+  toMin(s) { if (!s || s.indexOf(':') < 0) return null; const p = s.split(':'); const h = +p[0], m = +p[1]; if (isNaN(h) || isNaN(m)) return null; return h * 60 + m; }
+  dur(m) {
+    const r = Math.round(m);
+    if (r <= 0) return '0m';
+    if (r < 60) return r + 'm';
+    const h = Math.floor(r / 60), mm = r % 60;
+    return mm ? h + 'h ' + mm + 'm' : h + 'h';
+  }
+  clockStr(sec) {
+    const s = Math.max(0, Math.floor(sec));
+    return String(Math.floor(s / 3600)).padStart(2, '0') + ':' + String(Math.floor(s / 60) % 60).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  }
+  autoSess(min) { const t = ((min % 1440) + 1440) % 1440; return t < 720 ? 'morning' : t < 1080 ? 'afternoon' : 'night'; }
+  eDur(e) { let d = e.to - e.from; if (d < 0) d += 1440; return d; }
+  bucket(st) { st = st || this.state; return st.store[st.activeId] || { subjects: [], days: {} }; }
+  subjects() { return this.bucket().subjects || []; }
+  days() { return this.bucket().days || {}; }
+  day(k) { return this.days()[k] || { entries: [], notes: '' }; }
+  subj(id) { return this.subjects().find(s => s.id === id) || null; }
+  patchBucket(fn) {
+    this.commit(st => {
+      const b = st.store[st.activeId] || { subjects: [], days: {} };
+      const store = Object.assign({}, st.store);
+      store[st.activeId] = Object.assign({}, b, fn(b, st));
+      return { store: store };
+    });
+  }
+
+  tint(hex) {
+    if (this.state.theme !== 'dark' || !/^#[0-9a-f]{6}$/i.test(hex)) return hex;
+    const n = parseInt(hex.slice(1), 16);
+    const mix = c => Math.round(c + (255 - c) * 0.34);
+    return 'rgb(' + mix(n >> 16 & 255) + ',' + mix(n >> 8 & 255) + ',' + mix(n & 255) + ')';
+  }
+  applyTheme(t) { this._appliedTheme = t; try { document.documentElement.setAttribute('data-theme', t); } catch (e) {} }
+
+  legacy() {
+    try {
+      const raw = localStorage.getItem(this.LEGACY);
+      if (!raw) return null;
+      const o = JSON.parse(raw);
+      if (!o || o.isSample) return null;
+      const days = o.days || {};
+      const has = Object.keys(days).some(k => days[k] && days[k].entries && days[k].entries.length);
+      if (!has) return null;
+      return { profiles: [{ id: 'p1', name: 'Me' }], activeId: 'p1', store: { p1: { subjects: o.subjects || [], days: days } }, theme: o.theme };
+    } catch (e) { return null; }
+  }
+
+  componentDidMount() {
+    let theme = null;
+    try {
+      const raw = localStorage.getItem(this.KEY);
+      const d = raw ? JSON.parse(raw) : (this.legacy() || {});
+      const patch = {};
+      if (d.profiles && d.profiles.length) patch.profiles = d.profiles;
+      if (d.store) patch.store = d.store;
+      if (d.activeId && d.store && d.store[d.activeId]) patch.activeId = d.activeId;
+      if (d.running) patch.running = d.running;
+      if (d.theme) { patch.theme = d.theme; theme = d.theme; }
+      if (d.updatedAt) patch.updatedAt = d.updatedAt;
+      this.setState(patch, () => this.persist(this.state));
+    } catch (e) {}
+    if (!theme) {
+      try { theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } catch (e) { theme = 'light'; }
+      this.setState({ theme: theme });
+    }
+    this.applyTheme(theme);
+    this._t = setInterval(() => { if (this.state.running) this.setState({ now: Date.now() }); }, 1000);
+    this._bp = () => {
+      const el = document.getElementById('report-sheet');
+      if (!el) return;
+      const px = 96 / 25.4;
+      const hide = [], show = [];
+      el.querySelectorAll('[data-print-hide]').forEach(n => { hide.push([n, n.style.display]); n.style.display = 'none'; });
+      el.querySelectorAll('[data-print-only]').forEach(n => { show.push([n, n.style.display]); n.style.display = 'block'; });
+      const r = el.getBoundingClientRect();
+      hide.forEach(p => { p[0].style.display = p[1]; });
+      show.forEach(p => { p[0].style.display = p[1]; });
+      const mm = v => (Math.ceil(v / px * 10) / 10 + 0.4).toFixed(1);
+      let bg = '#ffffff';
+      try { bg = getComputedStyle(el).backgroundColor || bg; } catch (e2) {}
+      let s = document.getElementById('om-page-size');
+      if (!s) { s = document.createElement('style'); s.id = 'om-page-size'; document.head.appendChild(s); }
+      s.textContent = '@page{size:' + mm(r.width) + 'mm ' + mm(r.height) + 'mm;margin:0}'
+        + '@media print{html,body{background:' + bg + ' !important;}}';
+    };
+    window.addEventListener('beforeprint', this._bp);
+    this._fo = () => { if (this.cloudCfg() && !this._pushing) this.pull(); };
+    window.addEventListener('focus', this._fo);
+    if (this.cloudCfg()) setTimeout(() => { this.pull().then(() => this.subscribe()); }, 250);
+  }
+  componentDidUpdate() { if (this._appliedTheme !== this.state.theme) this.applyTheme(this.state.theme); }
+  componentWillUnmount() {
+    clearInterval(this._t);
+    clearTimeout(this._pt);
+    clearTimeout(this._rt);
+    this.unsubscribe();
+    window.removeEventListener('beforeprint', this._bp);
+    window.removeEventListener('focus', this._fo);
+  }
+
+  persist(s) {
+    const payload = { profiles: s.profiles, activeId: s.activeId, store: s.store, running: s.running, theme: s.theme, updatedAt: Date.now() };
+    try { localStorage.setItem(this.cacheKey(), JSON.stringify(payload)); } catch (e) {}
+    this.queueSync();
+  }
+
+  cloudCfg() {
+    let u = (this.props.supabaseUrl || '').trim();
+    const k = (this.props.supabaseAnonKey || '').trim();
+    if (!u || !k) return null;
+    u = u.replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
+    return { url: u, key: k };
+  }
+
+  cacheKey() { return this.KEY; }
+
+  async sb() {
+    const c = this.cloudCfg();
+    if (!c) return null;
+    if (!window.supabase) {
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+        s.onload = res; s.onerror = () => rej(new Error('Could not load Supabase library'));
+        document.head.appendChild(s);
+      });
+    }
+    if (!this._sb) this._sb = window.supabase.createClient(c.url, c.key);
+    return this._sb;
+  }
+
+  async pull() {
+    if (!this.cloudCfg()) { this.setState({ sync: 'off', syncMsg: '' }); return; }
+    this.setState({ sync: 'busy', syncMsg: 'Loading\u2026' });
+    try {
+      const sb = await this.sb();
+      const res = await Promise.all([
+        sb.from('profiles').select('id,name,created_at').order('created_at'),
+        sb.from('subjects').select('id,profile_id,name,color,archived'),
+        sb.from('entries').select('id,profile_id,day,type,subject_id,session,from_min,to_min'),
+        sb.from('day_notes').select('profile_id,day,notes')
+      ]);
+      res.forEach(r => { if (r.error) throw r.error; });
+      const pr = res[0].data || [], su = res[1].data || [], en = res[2].data || [], no = res[3].data || [];
+      if (!pr.length) {
+        this._synced = { profiles: [], store: {} };
+        this.setState({ sync: 'ok', syncMsg: 'Connected' });
+        this.queueSync();
+        return;
+      }
+      const profiles = pr.map(p => ({ id: p.id, name: p.name }));
+      const store = {};
+      profiles.forEach(p => { store[p.id] = { subjects: [], days: {} }; });
+      const dayOf = (pid, k) => {
+        const bk = store[pid];
+        if (!bk) return null;
+        if (!bk.days[k]) bk.days[k] = { entries: [], notes: '' };
+        return bk.days[k];
+      };
+      su.forEach(s => { const bk = store[s.profile_id]; if (bk) bk.subjects.push({ id: s.id, name: s.name, color: s.color, archived: !!s.archived }); });
+      en.forEach(e => {
+        const d = dayOf(e.profile_id, String(e.day).slice(0, 10));
+        if (d) d.entries.push({ id: e.id, type: e.type, subject: e.subject_id, session: e.session, from: e.from_min, to: e.to_min });
+      });
+      no.forEach(n => { const d = dayOf(n.profile_id, String(n.day).slice(0, 10)); if (d) d.notes = n.notes || ''; });
+      Object.keys(store).forEach(pid => Object.keys(store[pid].days).forEach(k => store[pid].days[k].entries.sort((x, y) => x.from - y.from)));
+      const activeId = store[this.state.activeId] ? this.state.activeId : profiles[0].id;
+      this._synced = JSON.parse(JSON.stringify({ profiles: profiles, store: store }));
+      this.setState({ profiles: profiles, store: store, activeId: activeId }, () => {
+        const s = this.state;
+        try { localStorage.setItem(this.cacheKey(), JSON.stringify({ profiles: s.profiles, activeId: s.activeId, store: s.store, running: s.running, theme: s.theme, updatedAt: Date.now() })); } catch (e) {}
+        this.setState({ sync: 'ok', syncMsg: 'Live' });
+      });
+    } catch (e) {
+      this.setState({ sync: 'err', syncMsg: (e && e.message) || 'Sync failed' });
+    }
+  }
+
+  diff(prev, next) {
+    const ops = [];
+    const ids = next.profiles.map(p => p.id);
+    const was = {};
+    prev.profiles.forEach(p => { was[p.id] = p; });
+    const upP = next.profiles.filter(p => !was[p.id] || was[p.id].name !== p.name).map(p => ({ id: p.id, name: p.name }));
+    if (upP.length) ops.push({ table: 'profiles', kind: 'up', rows: upP });
+    const delP = prev.profiles.filter(p => ids.indexOf(p.id) < 0).map(p => p.id);
+    if (delP.length) ops.push({ table: 'profiles', kind: 'del', ids: delP });
+
+    const upS = [], delS = [], upE = [], delE = [], upN = [], delN = [];
+    ids.forEach(pid => {
+      const nb = next.store[pid] || { subjects: [], days: {} };
+      const ob = (prev.store && prev.store[pid]) || { subjects: [], days: {} };
+      const oldS = {};
+      (ob.subjects || []).forEach(s => { oldS[s.id] = s; });
+      (nb.subjects || []).forEach(s => {
+        const o = oldS[s.id];
+        if (!o || o.name !== s.name || o.color !== s.color || !!o.archived !== !!s.archived)
+          upS.push({ id: s.id, profile_id: pid, name: s.name, color: s.color, archived: !!s.archived });
+      });
+      const keepS = (nb.subjects || []).map(s => s.id);
+      (ob.subjects || []).forEach(s => { if (keepS.indexOf(s.id) < 0) delS.push(s.id); });
+
+      const seen = {};
+      Object.keys(nb.days || {}).concat(Object.keys(ob.days || {})).forEach(k => {
+        if (seen[k]) return;
+        seen[k] = 1;
+        const nd = (nb.days || {})[k] || { entries: [], notes: '' };
+        const od = (ob.days || {})[k] || { entries: [], notes: '' };
+        const oldE = {};
+        (od.entries || []).forEach(e => { oldE[e.id] = e; });
+        (nd.entries || []).forEach(e => {
+          const o = oldE[e.id];
+          if (!o || o.type !== e.type || o.subject !== e.subject || o.session !== e.session || o.from !== e.from || o.to !== e.to)
+            upE.push({ id: e.id, profile_id: pid, day: k, type: e.type, subject_id: e.subject || null, session: e.session, from_min: e.from, to_min: e.to });
+        });
+        const keepE = (nd.entries || []).map(e => e.id);
+        (od.entries || []).forEach(e => { if (keepE.indexOf(e.id) < 0) delE.push(e.id); });
+        const nn = nd.notes || '', on = od.notes || '';
+        if (nn !== on) {
+          if (nn) upN.push({ profile_id: pid, day: k, notes: nn });
+          else delN.push({ profile_id: pid, day: k });
+        }
+      });
+    });
+    if (delS.length) ops.push({ table: 'subjects', kind: 'del', ids: delS });
+    if (upS.length) ops.push({ table: 'subjects', kind: 'up', rows: upS });
+    if (delE.length) ops.push({ table: 'entries', kind: 'del', ids: delE });
+    if (upE.length) ops.push({ table: 'entries', kind: 'up', rows: upE });
+    delN.forEach(m => ops.push({ table: 'day_notes', kind: 'delMatch', match: m }));
+    if (upN.length) ops.push({ table: 'day_notes', kind: 'upNote', rows: upN });
+    return ops;
+  }
+
+  queueSync() {
+    if (!this.cloudCfg()) return;
+    clearTimeout(this._pt);
+    this._pt = setTimeout(() => this.pushDiff(), 700);
+  }
+
+  async pushDiff() {
+    if (!this.cloudCfg()) return;
+    if (this._pushing) { this._again = true; return; }
+    const prev = this._synced || { profiles: [], store: {} };
+    const next = { profiles: this.state.profiles, store: this.state.store };
+    const ops = this.diff(prev, next);
+    if (!ops.length) return;
+    this._pushing = true;
+    this.setState({ sync: 'busy', syncMsg: 'Saving\u2026' });
+    try {
+      const sb = await this.sb();
+      for (let i = 0; i < ops.length; i++) {
+        const op = ops[i], t = sb.from(op.table);
+        let r;
+        if (op.kind === 'del') r = await t.delete().in('id', op.ids);
+        else if (op.kind === 'delMatch') r = await t.delete().match(op.match);
+        else if (op.kind === 'upNote') r = await t.upsert(op.rows, { onConflict: 'profile_id,day' });
+        else r = await t.upsert(op.rows);
+        if (r.error) throw r.error;
+      }
+      this._synced = JSON.parse(JSON.stringify(next));
+      this._lastPush = Date.now();
+      this.setState({ sync: 'ok', syncMsg: 'Live' });
+    } catch (e) {
+      this.setState({ sync: 'err', syncMsg: (e && e.message) || 'Save failed' });
+    }
+    this._pushing = false;
+    if (this._again) { this._again = false; this.queueSync(); }
+  }
+
+  async subscribe() {
+    if (!this.cloudCfg() || this._chan) return;
+    try {
+      const sb = await this.sb();
+      const hit = () => {
+        clearTimeout(this._rt);
+        this._rt = setTimeout(() => {
+          if (this._pushing || Date.now() - (this._lastPush || 0) < 1800) return;
+          this.pull();
+        }, 500);
+      };
+      const ch = sb.channel('studylog-shared');
+      ['profiles', 'subjects', 'entries', 'day_notes'].forEach(t => {
+        ch.on('postgres_changes', { event: '*', schema: 'public', table: t }, hit);
+      });
+      ch.subscribe();
+      this._chan = ch;
+    } catch (e) {}
+  }
+
+  unsubscribe() {
+    if (!this._chan) return;
+    try { this._chan.unsubscribe(); } catch (e) {}
+    this._chan = null;
+  }
+
+  commit(fn) { this.setState(fn, () => this.persist(this.state)); }
+
+  addEntry(k, e) {
+    this.patchBucket(b => {
+      const days = Object.assign({}, b.days);
+      const d = days[k] ? Object.assign({}, days[k]) : { entries: [], notes: '' };
+      d.entries = d.entries.concat([e]).sort((x, y) => x.from - y.from);
+      days[k] = d;
+      return { days: days };
+    });
+  }
+
+  renderVals() {
+    const st = this.state, P = this.props;
+    const dark = st.theme === 'dark';
+    const STUDY = 'var(--study)', BRK = 'var(--break)';
+    const dayK = st.date, d = this.day(dayK);
+    const entries = d.entries.slice().sort((a, b) => a.from - b.from);
+    const dt = this.parseKey(dayK);
+    const running = st.running && (!st.running.profileId || st.running.profileId === st.activeId) ? st.running : null;
+
+    let studyM = 0, breakM = 0;
+    const perSubj = {};
+    entries.forEach(e => {
+      const m = this.eDur(e);
+      if (e.type === 'break') breakM += m;
+      else { studyM += m; perSubj[e.subject] = (perSubj[e.subject] || 0) + m; }
+    });
+
+    const runSec = running ? (st.now - running.startedAt) / 1000 : 0;
+    const total = studyM + breakM;
+
+    const yk = this.dk(new Date(dt.getTime() - 86400000));
+    const allDays = this.days();
+    const dayStudy = k => (allDays[k] ? allDays[k].entries : []).reduce((a, e) => a + (e.type === 'break' ? 0 : this.eDur(e)), 0);
+    const dayBreak = k => (allDays[k] ? allDays[k].entries : []).reduce((a, e) => a + (e.type === 'break' ? this.eDur(e) : 0), 0);
+    const yStudy = dayStudy(yk);
+    let streak = 0, cur = new Date(dt.getTime());
+    while (dayStudy(this.dk(cur)) > 0 && streak < 400) { streak++; cur = new Date(cur.getTime() - 86400000); }
+    const delta = Math.round(studyM - yStudy);
+    const deltaLabel = yStudy === 0
+      ? (studyM > 0 ? 'No study logged yesterday' : 'Nothing logged yet')
+      : (delta === 0 ? 'Same as yesterday' : (delta > 0 ? '+' + this.dur(delta) + ' vs yesterday' : '\u2212' + this.dur(-delta) + ' vs yesterday'));
+
+    const mkNav = (k, label) => ({
+      label: label, go: () => this.setState({ view: k }),
+      bg: st.view === k ? 'var(--ink)' : 'transparent',
+      fg: st.view === k ? 'var(--onink)' : 'var(--ink-2)',
+      dot: st.view === k ? 'var(--study)' : 'var(--faint)'
+    });
+
+    const setSubjects = fn => this.patchBucket(b => ({ subjects: fn(b.subjects || []) }));
+    const allSubj = this.subjects();
+    const liveSubj = allSubj.filter(s => !s.archived);
+    const mkSubject = s => ({
+      id: s.id, name: s.name, color: this.tint(s.color),
+      mins: perSubj[s.id] ? this.dur(perSubj[s.id]) : '\u2014',
+      isRow: st.editSubj !== s.id && st.confirmSubj !== s.id,
+      isEdit: st.editSubj === s.id,
+      isConfirm: st.confirmSubj === s.id,
+      editName: st.editName,
+      onEditName: e => this.setState({ editName: e.target.value }),
+      startEdit: () => this.setState({ editSubj: s.id, editName: s.name, confirmSubj: null }),
+      saveEdit: ev => {
+        if (ev && ev.preventDefault) ev.preventDefault();
+        const n = (this.state.editName || '').trim();
+        if (n) setSubjects(list => list.map(z => z.id === s.id ? Object.assign({}, z, { name: n }) : z));
+        this.setState({ editSubj: null, editName: '' });
+      },
+      cancelEdit: () => this.setState({ editSubj: null, editName: '' }),
+      swatches: this.PAL.map(c => ({
+        color: this.tint(c),
+        ring: c === s.color ? 'var(--ink)' : 'transparent',
+        pick: () => setSubjects(list => list.map(z => z.id === s.id ? Object.assign({}, z, { color: c }) : z))
+      })),
+      askDelete: () => this.setState({ confirmSubj: s.id, editSubj: null }),
+      cancelDelete: () => this.setState({ confirmSubj: null }),
+      doArchive: () => { this.setState({ confirmSubj: null }); setSubjects(list => list.map(z => z.id === s.id ? Object.assign({}, z, { archived: true }) : z)); },
+      doDelete: () => { this.setState({ confirmSubj: null }); setSubjects(list => list.filter(z => z.id !== s.id)); },
+      restore: () => setSubjects(list => list.map(z => z.id === s.id ? Object.assign({}, z, { archived: false }) : z))
+    });
+    const subjectList = liveSubj.map(mkSubject);
+    const archivedList = allSubj.filter(s => s.archived).map(mkSubject);
+
+    const mode = (k, label) => ({
+      label: label, go: () => this.setState({ runType: k }),
+      bg: st.runType === k ? (k === 'break' ? BRK : STUDY) : 'transparent',
+      fg: st.runType === k ? (dark ? '#141311' : '#fff') : 'var(--ink-3)',
+      border: st.runType === k ? (k === 'break' ? BRK : STUDY) : 'var(--line)'
+    });
+    const onTint = dark ? '#141311' : '#fff';
+    const chip = (active, tint) => ({
+      bg: active ? (tint || 'var(--ink)') : 'transparent',
+      fg: active ? (tint ? onTint : 'var(--onink)') : 'var(--ink-2)',
+      border: active ? (tint || 'var(--ink)') : 'var(--line)'
+    });
+    const curRun = liveSubj.some(s => s.id === st.runSubject) ? st.runSubject : (liveSubj[0] ? liveSubj[0].id : '');
+    const curMan = liveSubj.some(s => s.id === st.manSubject) ? st.manSubject : (liveSubj[0] ? liveSubj[0].id : '');
+    const runSubjectChips = liveSubj.map(s => {
+      const col = this.tint(s.color), on = curRun === s.id, c = chip(on, col);
+      return { name: s.name, dot: on ? (dark ? 'rgba(20,19,17,0.55)' : 'rgba(255,255,255,0.85)') : col, bg: c.bg, fg: c.fg, border: c.border, go: () => this.setState({ runSubject: s.id }) };
+    });
+    const runSessionChips = [{ k: 'auto', n: 'Auto' }].concat(this.SK.map(k => ({ k: k, n: this.SHORT[k] }))).map(o => {
+      const c = chip(st.runSession === o.k);
+      return { name: o.n, bg: c.bg, fg: c.fg, border: c.border, go: () => this.setState({ runSession: o.k }) };
+    });
+
+    const runSubjName = running && running.type !== 'break' ? (this.subj(running.subject) ? this.subj(running.subject).name : 'Subject') : '';
+    const clockCaption = running
+      ? (running.type === 'break' ? 'Break \u00b7 started ' + this.hhmm(running.startMin) : runSubjName + ' \u00b7 started ' + this.hhmm(running.startMin))
+      : (st.runType === 'break' ? 'Break timer ready' : 'Ready \u2014 press start when you sit down');
+
+    const toggleRun = () => {
+      if (running) {
+        const now = new Date();
+        const to = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+        const e = { id: 'e' + Date.now(), type: running.type, subject: running.subject, session: running.session === 'auto' ? this.autoSess(running.startMin) : running.session, from: running.startMin, to: to };
+        if (this.eDur(e) >= 0.1) this.addEntry(running.dateKey, e);
+        this.commit(() => ({ running: null }));
+      } else {
+        if (st.runType !== 'break' && !liveSubj.length) return;
+        const now = new Date();
+        const startMin = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+        this.commit(x => ({ running: { type: x.runType, subject: curRun, session: x.runSession, startMin: startMin, startedAt: Date.now(), dateKey: this.dk(now), profileId: x.activeId }, now: Date.now(), date: this.dk(now) }));
+      }
+    };
+
+    const addManual = ev => {
+      ev.preventDefault();
+      const f = this.toMin(st.manFrom), t = this.toMin(st.manTo);
+      if (f === null || t === null) { this.setState({ manError: 'Enter both a start and an end time.' }); return; }
+      if (f === t) { this.setState({ manError: 'Start and end cannot be the same.' }); return; }
+      if (st.manType !== 'break' && !liveSubj.length) { this.setState({ manError: 'Add a subject first.' }); return; }
+      const e = { id: 'e' + Date.now(), type: st.manType, subject: st.manType === 'break' ? null : curMan, session: st.manSession === 'auto' ? this.autoSess(f) : st.manSession, from: f, to: t };
+      this.addEntry(dayK, e);
+      this.setState({ manFrom: '', manTo: '', manError: '' });
+    };
+
+    const rowFor = e => {
+      const s = e.type === 'break' ? null : this.subj(e.subject);
+      return {
+        isHead: false, isEntry: true,
+        color: e.type === 'break' ? BRK : (s ? this.tint(s.color) : 'var(--muted-2)'),
+        range: this.hhmm(e.from) + ' \u2013 ' + this.hhmm(e.to),
+        name: e.type === 'break' ? 'Break' : (s ? s.name : 'Removed subject'),
+        nameColor: e.type === 'break' ? BRK : 'var(--ink)',
+        sess: this.SHORT[e.session] || '\u2014',
+        dur: this.dur(this.eDur(e)),
+        remove: () => this.patchBucket(b => {
+          const days = Object.assign({}, b.days);
+          const dd = Object.assign({}, days[dayK]);
+          dd.entries = (dd.entries || []).filter(z => z.id !== e.id);
+          days[dayK] = dd;
+          return { days: days };
+        })
+      };
+    };
+
+    const trackRows = [];
+    const sessionRows = [];
+    this.SK.forEach(k => {
+      const list = entries.filter(e => e.session === k);
+      const sM = list.reduce((a, e) => a + (e.type === 'break' ? 0 : this.eDur(e)), 0);
+      const bM = list.reduce((a, e) => a + (e.type === 'break' ? this.eDur(e) : 0), 0);
+      const names = [];
+      list.forEach(e => { if (e.type !== 'break') { const s = this.subj(e.subject); if (s && names.indexOf(s.name) < 0) names.push(s.name); } });
+      sessionRows.push({
+        name: this.SN[k],
+        nameColor: list.length ? 'var(--ink)' : 'var(--faint-2)',
+        study: sM ? this.dur(sM) : '\u2014', studyColor: sM ? STUDY : 'var(--faint)',
+        brk: bM ? this.dur(bM) : '\u2014', breakColor: bM ? BRK : 'var(--faint)',
+        covered: names.length ? names.join(', ') : '\u2014'
+      });
+      if (list.length) {
+        trackRows.push({ isHead: true, isEntry: false, name: this.SN[k], meta: this.dur(sM) + ' study \u00b7 ' + this.dur(bM) + ' break' });
+        list.forEach(e => trackRows.push(rowFor(e)));
+      }
+    });
+
+    const subjectBars = allSubj.filter(s => perSubj[s.id]).map(s => ({
+      name: s.name, color: this.tint(s.color), label: this.dur(perSubj[s.id]),
+      pct: (studyM ? Math.round(perSubj[s.id] / studyM * 100) : 0) + '%'
+    })).sort((a, b) => parseInt(b.pct) - parseInt(a.pct));
+
+    const [my, mm] = st.month.split('-').map(Number);
+    const first = new Date(my, mm - 1, 1);
+    const offset = (first.getDay() + 6) % 7;
+    const gridStart = new Date(my, mm - 1, 1 - offset);
+    const todayK = this.dk(new Date());
+    let maxM = 1;
+    Object.keys(allDays).forEach(k => { const v = dayStudy(k); if (v > maxM) maxM = v; });
+    const calCells = [];
+    for (let i = 0; i < 42; i++) {
+      const cd = new Date(gridStart.getTime() + i * 86400000);
+      const ck = this.dk(cd);
+      const inM = cd.getMonth() === mm - 1;
+      const sm = dayStudy(ck);
+      const sel = ck === st.date;
+      calCells.push({
+        day: String(cd.getDate()), meta: sm ? this.dur(sm) : '',
+        metaColor: sel ? 'var(--onink-soft)' : 'var(--muted)',
+        pct: Math.round(Math.min(1, sm / maxM) * 100) + '%',
+        barColor: STUDY,
+        bg: sel ? 'var(--ink)' : (inM ? 'var(--surface)' : 'transparent'),
+        fg: sel ? 'var(--onink)' : (inM ? 'var(--ink)' : 'var(--faint)'),
+        border: sel ? 'var(--ink)' : (ck === todayK ? 'var(--study)' : 'var(--line-3)'),
+        weight: ck === todayK ? '600' : '400',
+        go: () => this.setState({ date: ck, view: 'track' })
+      });
+    }
+
+    const recentDays = Object.keys(allDays).filter(k => this.day(k).entries.length).sort().reverse().slice(0, 14).map(k => {
+      const s = dayStudy(k), b = dayBreak(k), t = Math.max(s + b, 1);
+      const dd = this.parseKey(k);
+      return {
+        label: dd.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }),
+        study: this.dur(s), brk: b ? this.dur(b) : '\u2014',
+        studyPct: Math.round(s / Math.max(maxM, t) * 100) + '%',
+        breakPct: Math.round(b / Math.max(maxM, t) * 100) + '%',
+        go: () => this.setState({ date: k, view: 'track' })
+      };
+    });
+
+    const prof = st.profiles.find(p => p.id === st.activeId) || st.profiles[0] || { name: '' };
+    const owner = (prof.name || '').trim();
+
+    const doPrint = () => { setTimeout(() => window.print(), 50); };
+
+    return {
+      isTrack: st.view === 'track', isReport: st.view === 'report', isHistory: st.view === 'history',
+      goReport: () => this.setState({ view: 'report' }), goTrack: () => this.setState({ view: 'track' }),
+      navItems: [mkNav('track', 'Track'), mkNav('report', 'Report'), mkNav('history', 'History')],
+      themeIcon: dark ? '\u25D1' : '\u25D0',
+      themeTitle: dark ? 'Switch to light' : 'Switch to dark',
+      toggleTheme: () => {
+        const next = dark ? 'light' : 'dark';
+        this.applyTheme(next);
+        this.commit(() => ({ theme: next }));
+      },
+      dateKey: dayK,
+      dateShort: dt.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }),
+      dateLong: dt.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+      prevDay: () => this.setState({ date: this.dk(new Date(dt.getTime() - 86400000)) }),
+      nextDay: () => this.setState({ date: this.dk(new Date(dt.getTime() + 86400000)) }),
+
+      studyLabel: this.dur(studyM), breakLabel: this.dur(breakM),
+      focusLabel: total ? Math.round(studyM / total * 100) + '%' : '\u2014',
+      showFocus: P.showFocus === true,
+      streakLabel: streak ? streak + (streak === 1 ? ' day' : ' days') : '\u2014',
+      deltaLabel: deltaLabel,
+      trackSummary: entries.length ? entries.length + ' entries \u00b7 ' + this.dur(studyM) + ' studied \u00b7 ' + this.dur(breakM) + ' on break' : 'No entries yet',
+      entryCountLabel: entries.length + (entries.length === 1 ? ' entry' : ' entries') + ' \u00b7 ' + this.dur(total) + ' tracked',
+
+      subjectList: subjectList,
+      archivedList: archivedList,
+      hasArchived: archivedList.length > 0,
+      showArchived: st.showArchived === true,
+      toggleArchived: () => this.setState({ showArchived: !st.showArchived }),
+      archivedLabel: (st.showArchived ? 'Hide' : 'Show') + ' archived (' + archivedList.length + ')',
+      noSubjects: liveSubj.length === 0,
+      newSubject: st.newSubject,
+      onNewSubject: e => this.setState({ newSubject: e.target.value }),
+      addSubject: e => {
+        e.preventDefault();
+        const n = st.newSubject.trim();
+        if (!n) return;
+        this.setState({ newSubject: '' });
+        setSubjects(list => list.concat([{ id: 's' + Date.now(), name: n, color: this.PAL[list.length % this.PAL.length] }]));
+      },
+
+      modeBtns: [mode('study', 'Study'), mode('break', 'Break')],
+      runShowSubjects: st.runType !== 'break',
+      runSubjectChips: runSubjectChips, runSessionChips: runSessionChips,
+      clock: this.clockStr(runSec), clockColor: running ? (running.type === 'break' ? BRK : STUDY) : 'var(--faint)',
+      clockCaption: clockCaption,
+      runBtnLabel: running ? 'Stop & log' : (st.runType === 'break' ? 'Start break' : 'Start studying'),
+      runBtnBg: running ? 'var(--ink)' : (st.runType !== 'break' && !liveSubj.length ? 'var(--wash-4)' : (st.runType === 'break' ? BRK : STUDY)),
+      runBtnCursor: !running && st.runType !== 'break' && !liveSubj.length ? 'not-allowed' : 'pointer',
+      runBtnFg: running ? 'var(--onink)' : (st.runType !== 'break' && !liveSubj.length ? 'var(--muted-2)' : onTint),
+      runDisabled: !running && st.runType !== 'break' && liveSubj.length === 0,
+      toggleRun: toggleRun,
+
+      manType: st.manType, manSubject: curMan, manSession: st.manSession, manFrom: st.manFrom, manTo: st.manTo,
+      manSubjectDisabled: st.manType === 'break',
+      onManType: e => this.setState({ manType: e.target.value }),
+      onManSubject: e => this.setState({ manSubject: e.target.value }),
+      onManSession: e => this.setState({ manSession: e.target.value }),
+      onManFrom: e => this.setState({ manFrom: e.target.value }),
+      onManTo: e => this.setState({ manTo: e.target.value }),
+      addManual: addManual, manError: st.manError,
+
+      hasEntries: entries.length > 0, noEntries: entries.length === 0,
+      hasStudy: subjectBars.length > 0,
+      trackRows: trackRows, sessionRows: sessionRows, logRows: entries.map(rowFor), subjectBars: subjectBars,
+
+      notes: d.notes || '',
+      onNotes: e => {
+        const v = e.target.value;
+        this.patchBucket(b => {
+          const days = Object.assign({}, b.days);
+          const dd = days[dayK] ? Object.assign({}, days[dayK]) : { entries: [], notes: '' };
+          dd.notes = v; days[dayK] = dd;
+          return { days: days };
+        });
+      },
+      cloudOn: !!this.cloudCfg(),
+      syncDot: st.sync === 'ok' ? 'var(--study)' : st.sync === 'err' ? 'var(--break)' : 'var(--muted-2)',
+      syncLabel: st.sync === 'err' ? (st.syncMsg || 'Sync error') : st.sync === 'busy' ? (st.syncMsg || 'Syncing\u2026') : st.sync === 'ok' ? (st.syncMsg || 'Live') : 'Not connected',
+      syncNow: () => this.pull(),
+      profileTabs: st.profiles.map(p => ({
+        name: p.name,
+        bg: p.id === st.activeId ? 'var(--surface)' : 'transparent',
+        fg: p.id === st.activeId ? 'var(--ink)' : 'var(--muted)',
+        underline: p.id === st.activeId ? 'var(--study)' : 'transparent',
+        go: () => this.setState({ activeId: p.id, editSubj: null, confirmSubj: null, confirmProfile: null, renamingProfile: false, manError: '' })
+      })),
+      activeProfile: owner,
+      addingProfile: st.addingProfile === true,
+      noAddingProfile: st.addingProfile !== true,
+      newProfile: st.newProfile,
+      onNewProfile: e => this.setState({ newProfile: e.target.value }),
+      openAddProfile: () => this.setState({ addingProfile: true, newProfile: '', renamingProfile: false }),
+      cancelAddProfile: () => this.setState({ addingProfile: false, newProfile: '' }),
+      addProfile: e => {
+        e.preventDefault();
+        const n = (st.newProfile || '').trim();
+        if (!n) return;
+        const id = 'p' + Date.now();
+        this.commit(x => {
+          const store = Object.assign({}, x.store);
+          store[id] = { subjects: [], days: {} };
+          return { profiles: x.profiles.concat([{ id: id, name: n }]), store: store, activeId: id, addingProfile: false, newProfile: '' };
+        });
+      },
+      renamingProfile: st.renamingProfile === true,
+      notRenaming: st.renamingProfile !== true,
+      profileName: st.profileName,
+      onProfileName: e => this.setState({ profileName: e.target.value }),
+      openRename: () => this.setState({ renamingProfile: true, profileName: owner, addingProfile: false }),
+      cancelRename: () => this.setState({ renamingProfile: false }),
+      saveRename: e => {
+        e.preventDefault();
+        const n = (st.profileName || '').trim();
+        if (!n) { this.setState({ renamingProfile: false }); return; }
+        this.commit(x => ({ profiles: x.profiles.map(p => p.id === x.activeId ? Object.assign({}, p, { name: n }) : p), renamingProfile: false }));
+      },
+      canRemoveProfile: st.profiles.length > 1,
+      confirmProfileOpen: st.confirmProfile === st.activeId,
+      askRemoveProfile: () => this.setState({ confirmProfile: st.activeId }),
+      cancelRemoveProfile: () => this.setState({ confirmProfile: null }),
+      removeProfile: () => this.commit(x => {
+        const profiles = x.profiles.filter(p => p.id !== x.activeId);
+        const store = Object.assign({}, x.store);
+        delete store[x.activeId];
+        return { profiles: profiles, store: store, activeId: profiles[0].id, confirmProfile: null, running: null };
+      }),
+      sheetW: (P.reportWidth || 720) + 'px',
+      paper: dark ? 'var(--sheet)' : (P.paperTint || '#ffffff'),
+      owner: owner, hasOwner: owner.length > 0,
+      doPrint: doPrint,
+
+      monthLabel: first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
+      prevMonth: () => { const p = new Date(my, mm - 2, 1); this.setState({ month: this.dk(p).slice(0, 7) }); },
+      nextMonth: () => { const p = new Date(my, mm, 1); this.setState({ month: this.dk(p).slice(0, 7) }); },
+      calCells: calCells, recentDays: recentDays,
+      hasRecent: recentDays.length > 0, noRecent: recentDays.length === 0
+    };
+  }
+}
+</script>
+</body>
+</html>
