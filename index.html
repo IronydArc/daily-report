@@ -10,9 +10,9 @@
 <helmet data-dc-atomics="">
 <title>Study Time Tracker</title>
 <meta name="omelette-owns-print" content="1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://cloudflare.com">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <style>
@@ -49,6 +49,31 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
 [data-theme="dark"] input[type=time],[data-theme="dark"] select{color-scheme:dark;}
 ::selection{background:var(--wash-4);}
 [data-print-only]{display:none;}
+@media (max-width:860px){
+  html,body{height:auto;}
+  [data-app-root]{flex-direction:column !important;height:auto !important;min-height:100dvh;overflow:visible !important;}
+  [data-sidebar]{position:fixed !important;top:0;left:0;bottom:0;width:min(88vw,300px) !important;z-index:60;transform:translateX(-102%);transition:transform .22s ease;box-shadow:0 0 44px rgba(0,0,0,0.34);}
+  [data-sidebar][data-open="1"]{transform:none;}
+  [data-scrim]{display:block !important;}
+  [data-mbar]{display:flex !important;}
+  [data-sm-only]{display:flex !important;}
+  [data-main]{overflow:visible !important;}
+  [data-pad]{padding-left:15px !important;padding-right:15px !important;}
+  [data-page]{padding-top:18px !important;padding-bottom:52px !important;gap:20px !important;}
+  [data-tabs]{flex-wrap:wrap !important;}
+  [data-hide-sm]{display:none !important;}
+  [data-card]{padding:18px 15px !important;border-radius:12px !important;}
+  [data-clock]{font-size:42px !important;}
+  [data-runbtn]{flex:1 1 100% !important;padding:16px 20px !important;}
+  [data-manform] label{flex:1 1 140px !important;min-width:0 !important;}
+  [data-manform] select,[data-manform] input{width:100% !important;}
+  [data-manform] button[type=submit]{flex:1 1 100% !important;padding:13px !important;font-size:13.5px !important;}
+  [data-range]{width:88px !important;font-size:11.5px !important;}
+  [data-sheet-wrap]{padding:0 0 48px !important;}
+  #report-sheet{padding:26px 18px 22px !important;border-radius:0 !important;border-left:none !important;border-right:none !important;}
+  [data-cal-cell]{height:58px !important;padding:6px !important;}
+  [data-recent-label]{width:88px !important;font-size:12px !important;}
+}
 @media print{
   html,body{height:auto !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   [data-print-hide]{display:none !important;}
@@ -62,13 +87,20 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
 </helmet>
 <div data-app-root="" style="display:flex;height:100vh;overflow:hidden;background:var(--bg);">
 
-  <aside data-print-hide="" style="width:252px;flex:none;display:flex;flex-direction:column;background:var(--bg-2);border-right:1px solid var(--line-3);overflow-y:auto;">
+  <sc-if value="{{ navOpen }}">
+    <div data-scrim="" data-print-hide="" onClick="{{ closeNav }}" style="display:none;position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(12,11,10,0.46);z-index:50;"></div>
+  </sc-if>
+
+  <aside data-sidebar="" data-open="{{ navOpenAttr }}" data-print-hide="" style="width:252px;flex:none;display:flex;flex-direction:column;background:var(--bg-2);border-right:1px solid var(--line-3);overflow-y:auto;">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:22px 18px 16px 20px;">
       <div>
         <div style="font-family:'Newsreader',serif;font-size:21px;font-weight:400;letter-spacing:-0.01em;line-height:1.1;">Study Log</div>
         <div style="margin-top:4px;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">Daily report</div>
       </div>
-      <button onClick="{{ toggleTheme }}" title="{{ themeTitle }}" style="flex:none;width:28px;height:28px;border:1px solid var(--line-3);border-radius:8px;background:transparent;color:var(--ink-3);font-size:13px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:var(--wash);color:var(--ink);">{{ themeIcon }}</button>
+      <div style="display:flex;align-items:center;gap:7px;flex:none;">
+        <button onClick="{{ toggleTheme }}" title="{{ themeTitle }}" style="flex:none;width:28px;height:28px;border:1px solid var(--line-3);border-radius:8px;background:transparent;color:var(--ink-3);font-size:13px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:var(--wash);color:var(--ink);">{{ themeIcon }}</button>
+        <button data-sm-only="" onClick="{{ closeNav }}" title="Close menu" style="display:none;flex:none;width:28px;height:28px;border:1px solid var(--line-3);border-radius:8px;background:transparent;color:var(--ink-3);font-size:15px;line-height:1;cursor:pointer;align-items:center;justify-content:center;" style-hover="background:var(--wash);color:var(--ink);">×</button>
+      </div>
     </div>
 
     <div style="padding:0 16px 14px;">
@@ -176,7 +208,18 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
 
   <main data-main="" style="flex:1;min-width:0;overflow-y:auto;display:flex;flex-direction:column;">
 
-    <div data-print-hide="" style="flex:none;display:flex;align-items:stretch;gap:2px;padding:0 40px;background:var(--bg-2);border-bottom:1px solid var(--line-3);">
+    <div data-mbar="" data-print-hide="" style="display:none;align-items:center;gap:7px;padding:9px 13px;background:var(--bg-2);border-bottom:1px solid var(--line-3);position:sticky;top:0;z-index:30;">
+      <button onClick="{{ openNav }}" title="Menu" style="flex:none;width:42px;height:42px;border:1px solid var(--line-3);border-radius:10px;background:transparent;color:var(--ink);font-size:16px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;">☰</button>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;">
+        <span style="font-family:'Newsreader',serif;font-size:16px;line-height:1.15;letter-spacing:-0.01em;">Study Log</span>
+        <span style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ dateShort }}</span>
+      </div>
+      <button onClick="{{ prevDay }}" title="Previous day" style="flex:none;width:42px;height:42px;border:1px solid var(--line-3);border-radius:10px;background:transparent;color:var(--ink-2);font-size:16px;line-height:1;cursor:pointer;">‹</button>
+      <button onClick="{{ nextDay }}" title="Next day" style="flex:none;width:42px;height:42px;border:1px solid var(--line-3);border-radius:10px;background:transparent;color:var(--ink-2);font-size:16px;line-height:1;cursor:pointer;">›</button>
+      <button onClick="{{ toggleTheme }}" title="{{ themeTitle }}" style="flex:none;width:42px;height:42px;border:1px solid var(--line-3);border-radius:10px;background:transparent;color:var(--ink-3);font-size:14px;line-height:1;cursor:pointer;">{{ themeIcon }}</button>
+    </div>
+
+    <div data-tabs="" data-pad="" data-print-hide="" style="flex:none;display:flex;align-items:stretch;gap:2px;padding:0 40px;background:var(--bg-2);border-bottom:1px solid var(--line-3);">
       <sc-for list="{{ profileTabs }}" as="p" hint-placeholder-count="1">
         <button onClick="{{ p.go }}" style="border:none;border-radius:8px 8px 0 0;border-bottom:2px solid {{ p.underline }};background:{{ p.bg }};color:{{ p.fg }};padding:12px 16px 10px;font-size:12.5px;font-weight:500;letter-spacing:-0.01em;cursor:pointer;" style-hover="color:var(--ink);">{{ p.name }}</button>
       </sc-for>
@@ -208,7 +251,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
       </sc-if>
     </div>
     <sc-if value="{{ confirmProfileOpen }}">
-      <div data-print-hide="" style="flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:11px 40px;background:var(--field);border-bottom:1px solid var(--line-3);">
+      <div data-pad="" data-print-hide="" style="flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:11px 40px;background:var(--field);border-bottom:1px solid var(--line-3);">
         <span style="font-size:12px;line-height:1.5;color:var(--ink-2);">Remove {{ activeProfile }} and everything logged under it? This cannot be undone.</span>
         <button onClick="{{ removeProfile }}" style="border:1px solid var(--danger);border-radius:7px;background:transparent;color:var(--danger);padding:5px 11px;font-size:11.5px;font-weight:500;cursor:pointer;" style-hover="background:var(--danger);color:#fff;">Remove profile</button>
         <button onClick="{{ cancelRemoveProfile }}" style="border:none;background:transparent;padding:0;font-size:11.5px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--ink);">Cancel</button>
@@ -216,9 +259,9 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
     </sc-if>
 
     <sc-if value="{{ isTrack }}" hint-placeholder-val="{{ true }}">
-      <div style="max-width:920px;width:100%;margin:0 auto;padding:34px 40px 60px;display:flex;flex-direction:column;gap:26px;">
+      <div data-page="" data-pad="" style="max-width:920px;width:100%;margin:0 auto;padding:34px 40px 60px;display:flex;flex-direction:column;gap:26px;">
 
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;">
           <div>
             <h1 style="margin:0;font-family:'Newsreader',serif;font-size:30px;font-weight:400;letter-spacing:-0.015em;line-height:1.1;">{{ dateLong }}</h1>
             <div style="margin-top:5px;font-size:12.5px;color:var(--muted);">{{ trackSummary }}</div>
@@ -226,7 +269,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
           <button onClick="{{ goReport }}" style="flex:none;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink-2);padding:8px 14px;font-size:12.5px;font-weight:500;cursor:pointer;" style-hover="background:var(--ink);color:var(--onink);border-color:var(--ink);">View report</button>
         </div>
 
-        <section style="background:var(--surface);border:1px solid var(--line-3);border-radius:14px;padding:24px 26px;box-shadow:var(--shadow);">
+        <section data-card="" style="background:var(--surface);border:1px solid var(--line-3);border-radius:14px;padding:24px 26px;box-shadow:var(--shadow);">
           <div style="display:flex;gap:6px;margin-bottom:20px;">
             <sc-for list="{{ modeBtns }}" as="m" hint-placeholder-count="2">
               <button onClick="{{ m.go }}" style="border-radius:8px;padding:7px 15px;font-size:12.5px;font-weight:500;letter-spacing:-0.01em;cursor:pointer;border:1px solid {{ m.border }};background:{{ m.bg }};color:{{ m.fg }};">{{ m.label }}</button>
@@ -235,10 +278,10 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
 
           <div style="display:flex;align-items:center;gap:30px;flex-wrap:wrap;">
             <div style="flex:none;">
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:52px;font-weight:400;letter-spacing:-0.03em;line-height:1;color:{{ clockColor }};">{{ clock }}</div>
+              <div data-clock="" style="font-family:'IBM Plex Mono',monospace;font-size:52px;font-weight:400;letter-spacing:-0.03em;line-height:1;color:{{ clockColor }};">{{ clock }}</div>
               <div style="margin-top:8px;font-size:12px;color:var(--muted);">{{ clockCaption }}</div>
             </div>
-            <button onClick="{{ toggleRun }}" disabled="{{ runDisabled }}" style="flex:none;border:none;border-radius:10px;padding:14px 30px;font-size:14px;font-weight:600;letter-spacing:-0.01em;cursor:{{ runBtnCursor }};background:{{ runBtnBg }};color:{{ runBtnFg }};" style-hover="filter:brightness(1.08);">{{ runBtnLabel }}</button>
+            <button data-runbtn="" onClick="{{ toggleRun }}" disabled="{{ runDisabled }}" style="flex:none;border:none;border-radius:10px;padding:14px 30px;font-size:14px;font-weight:600;letter-spacing:-0.01em;cursor:{{ runBtnCursor }};background:{{ runBtnBg }};color:{{ runBtnFg }};" style-hover="filter:brightness(1.08);">{{ runBtnLabel }}</button>
           </div>
 
           <div style="margin-top:22px;padding-top:20px;border-top:1px solid var(--hair);display:flex;flex-direction:column;gap:14px;">
@@ -264,9 +307,9 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
           </div>
         </section>
 
-        <section style="background:var(--surface);border:1px solid var(--line-3);border-radius:14px;padding:20px 26px;">
+        <section data-card="" style="background:var(--surface);border:1px solid var(--line-3);border-radius:14px;padding:20px 26px;">
           <div style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Add manually</div>
-          <form onSubmit="{{ addManual }}" style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;">
+          <form data-manform="" onSubmit="{{ addManual }}" style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;">
             <label style="display:flex;flex-direction:column;gap:5px;">
               <span style="font-size:10.5px;color:var(--muted);">Type</span>
               <select value="{{ manType }}" onChange="{{ onManType }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
@@ -321,7 +364,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
                   <sc-if value="{{ r.isEntry }}">
                     <div style="display:flex;align-items:center;gap:14px;padding:9px 2px;border-bottom:1px solid var(--hair);" style-hover="background:var(--wash-3);">
                       <span style="width:3px;height:22px;border-radius:2px;flex:none;background:{{ r.color }};"></span>
-                      <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-2);flex:none;width:106px;">{{ r.range }}</span>
+                      <span data-range="" style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-2);flex:none;width:106px;">{{ r.range }}</span>
                       <span style="flex:1;min-width:0;font-size:13px;letter-spacing:-0.01em;color:{{ r.nameColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.name }}</span>
                       <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;flex:none;color:var(--ink);">{{ r.dur }}</span>
                       <button onClick="{{ r.remove }}" style="flex:none;width:20px;height:20px;border:none;background:transparent;color:var(--faint);font-size:15px;line-height:1;cursor:pointer;padding:0;" style-hover="color:var(--danger);">×</button>
@@ -340,7 +383,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
 
     <sc-if value="{{ isReport }}">
       <div style="width:100%;padding:0;">
-        <div data-print-hide="" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:22px 40px;border-bottom:1px solid var(--line-3);background:var(--bg);position:sticky;top:0;z-index:5;">
+        <div data-pad="" data-print-hide="" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:22px 40px;border-bottom:1px solid var(--line-3);background:var(--bg);position:sticky;top:0;z-index:5;">
           <div>
             <div style="font-size:13px;font-weight:600;letter-spacing:-0.01em;">Report sheet</div>
             <div style="margin-top:2px;font-size:11.5px;color:var(--muted);">Trimmed to your logged time — screenshot the sheet or print it.</div>
@@ -416,14 +459,14 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
                 <span style="flex:1;">Session</span>
                 <span style="flex:none;width:66px;text-align:right;">Study</span>
                 <span style="flex:none;width:66px;text-align:right;">Break</span>
-                <span style="flex:none;width:150px;text-align:right;">Covered</span>
+                <span data-hide-sm="" style="flex:none;width:150px;text-align:right;">Covered</span>
               </div>
               <sc-for list="{{ sessionRows }}" as="s" hint-placeholder-count="3">
                 <div style="display:flex;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--hair-2);">
                   <span style="flex:1;font-size:12.5px;letter-spacing:-0.01em;color:{{ s.nameColor }};">{{ s.name }}</span>
                   <span style="flex:none;width:66px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:{{ s.studyColor }};">{{ s.study }}</span>
                   <span style="flex:none;width:66px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:{{ s.breakColor }};">{{ s.brk }}</span>
-                  <span style="flex:none;width:150px;text-align:right;font-size:11px;color:var(--muted);line-height:1.35;">{{ s.covered }}</span>
+                  <span data-hide-sm="" style="flex:none;width:150px;text-align:right;font-size:11px;color:var(--muted);line-height:1.35;">{{ s.covered }}</span>
                 </div>
               </sc-for>
             </div>
@@ -434,9 +477,9 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
                 <sc-for list="{{ logRows }}" as="r" hint-placeholder-count="6">
                   <div style="display:flex;align-items:center;gap:12px;padding:6.5px 0;border-bottom:1px solid var(--hair-3);">
                     <span style="width:3px;height:15px;border-radius:2px;flex:none;background:{{ r.color }};"></span>
-                    <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-2);flex:none;width:100px;">{{ r.range }}</span>
+                    <span data-range="" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-2);flex:none;width:100px;">{{ r.range }}</span>
                     <span style="flex:1;min-width:0;font-size:12.5px;letter-spacing:-0.01em;color:{{ r.nameColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.name }}</span>
-                    <span style="flex:none;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted-2);width:74px;text-align:right;">{{ r.sess }}</span>
+                    <span data-hide-sm="" style="flex:none;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted-2);width:74px;text-align:right;">{{ r.sess }}</span>
                     <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;flex:none;width:58px;text-align:right;">{{ r.dur }}</span>
                   </div>
                 </sc-for>
@@ -459,7 +502,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
     </sc-if>
 
     <sc-if value="{{ isHistory }}">
-      <div style="max-width:920px;width:100%;margin:0 auto;padding:34px 40px 60px;display:flex;flex-direction:column;gap:26px;">
+      <div data-page="" data-pad="" style="max-width:920px;width:100%;margin:0 auto;padding:34px 40px 60px;display:flex;flex-direction:column;gap:26px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
           <h1 style="margin:0;font-family:'Newsreader',serif;font-size:30px;font-weight:400;letter-spacing:-0.015em;">{{ monthLabel }}</h1>
           <div style="display:flex;gap:6px;">
@@ -480,7 +523,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
           </div>
           <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;">
             <sc-for list="{{ calCells }}" as="c" hint-placeholder-count="42">
-              <button onClick="{{ c.go }}" style="display:flex;flex-direction:column;justify-content:space-between;height:72px;padding:8px;border-radius:9px;cursor:pointer;text-align:left;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};" style-hover="border-color:var(--study);">
+              <button data-cal-cell="" onClick="{{ c.go }}" style="display:flex;flex-direction:column;justify-content:space-between;height:72px;padding:8px;border-radius:9px;cursor:pointer;text-align:left;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};" style-hover="border-color:var(--study);">
                 <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:{{ c.weight }};">{{ c.day }}</span>
                 <span style="display:flex;flex-direction:column;gap:3px;">
                   <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:{{ c.metaColor }};">{{ c.meta }}</span>
@@ -499,7 +542,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
             <div style="display:flex;flex-direction:column;">
               <sc-for list="{{ recentDays }}" as="d" hint-placeholder-count="5">
                 <button onClick="{{ d.go }}" style="display:flex;align-items:center;gap:16px;width:100%;text-align:left;padding:11px 6px;border:none;border-bottom:1px solid var(--hair);background:transparent;cursor:pointer;color:var(--ink);" style-hover="background:var(--wash-2);">
-                  <span style="flex:none;width:150px;font-size:13px;letter-spacing:-0.01em;">{{ d.label }}</span>
+                  <span data-recent-label="" style="flex:none;width:150px;font-size:13px;letter-spacing:-0.01em;">{{ d.label }}</span>
                   <span style="flex:1;min-width:0;display:flex;height:7px;border-radius:4px;overflow:hidden;background:var(--wash);">
                     <span style="display:block;height:7px;width:{{ d.studyPct }};background:var(--study);"></span>
                     <span style="display:block;height:7px;width:{{ d.breakPct }};background:var(--break);"></span>
@@ -544,7 +587,8 @@ class Component extends DCLogic {
     manType: 'study', manSubject: '', manSession: 'auto', manFrom: '', manTo: '',
     newSubject: '', manError: '',
     editSubj: null, editName: '', confirmSubj: null, showArchived: false,
-    addingProfile: false, newProfile: '', renamingProfile: false, profileName: '', confirmProfile: null
+    addingProfile: false, newProfile: '', renamingProfile: false, profileName: '', confirmProfile: null,
+    navOpen: false
   };
 
   dk(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -647,6 +691,7 @@ class Component extends DCLogic {
     clearInterval(this._t);
     clearTimeout(this._pt);
     clearTimeout(this._rt);
+    clearTimeout(this._retry);
     this.unsubscribe();
     window.removeEventListener('beforeprint', this._bp);
     window.removeEventListener('focus', this._fo);
@@ -698,6 +743,7 @@ class Component extends DCLogic {
       const pr = res[0].data || [], su = res[1].data || [], en = res[2].data || [], no = res[3].data || [];
       if (!pr.length) {
         this._synced = { profiles: [], store: {} };
+        this._pulled = true;
         this.setState({ sync: 'ok', syncMsg: 'Connected' });
         this.queueSync();
         return;
@@ -718,16 +764,52 @@ class Component extends DCLogic {
       });
       no.forEach(n => { const d = dayOf(n.profile_id, String(n.day).slice(0, 10)); if (d) d.notes = n.notes || ''; });
       Object.keys(store).forEach(pid => Object.keys(store[pid].days).forEach(k => store[pid].days[k].entries.sort((x, y) => x.from - y.from)));
-      const activeId = store[this.state.activeId] ? this.state.activeId : profiles[0].id;
+      const activeId0 = this.state.activeId;
       this._synced = JSON.parse(JSON.stringify({ profiles: profiles, store: store }));
+      if (!this._pulled && this._localEdits) this.mergeLocal(profiles, store);
+      this._pulled = true;
+      const activeId = store[activeId0] ? activeId0 : profiles[0].id;
       this.setState({ profiles: profiles, store: store, activeId: activeId }, () => {
         const s = this.state;
         try { localStorage.setItem(this.cacheKey(), JSON.stringify({ profiles: s.profiles, activeId: s.activeId, store: s.store, running: s.running, theme: s.theme, updatedAt: Date.now() })); } catch (e) {}
         this.setState({ sync: 'ok', syncMsg: 'Live' });
+        this.queueSync();
       });
     } catch (e) {
       this.setState({ sync: 'err', syncMsg: (e && e.message) || 'Sync failed' });
+      if (!this._pulled) { clearTimeout(this._retry); this._retry = setTimeout(() => this.pull(), 8000); }
     }
+  }
+
+  mergeLocal(profiles, store) {
+    const s = this.state;
+    const known = {};
+    profiles.forEach(p => { known[p.id] = 1; });
+    (s.profiles || []).forEach(p => {
+      const lb = (s.store || {})[p.id];
+      if (!lb) return;
+      if (!known[p.id]) {
+        const has = (lb.subjects || []).length || Object.keys(lb.days || {}).some(k => ((lb.days[k].entries || []).length || (lb.days[k].notes || '')));
+        if (!has) return;
+        profiles.push({ id: p.id, name: p.name });
+        store[p.id] = JSON.parse(JSON.stringify(lb));
+        return;
+      }
+      const rb = store[p.id];
+      const haveS = {};
+      rb.subjects.forEach(x => { haveS[x.id] = 1; });
+      (lb.subjects || []).forEach(x => { if (!haveS[x.id]) rb.subjects.push(Object.assign({}, x)); });
+      Object.keys(lb.days || {}).forEach(k => {
+        const ld = lb.days[k] || {};
+        if (!rb.days[k]) rb.days[k] = { entries: [], notes: '' };
+        const rd = rb.days[k];
+        const haveE = {};
+        rd.entries.forEach(e => { haveE[e.id] = 1; });
+        (ld.entries || []).forEach(e => { if (!haveE[e.id]) rd.entries.push(Object.assign({}, e)); });
+        rd.entries.sort((x, y) => x.from - y.from);
+        if (!rd.notes && ld.notes) rd.notes = ld.notes;
+      });
+    });
   }
 
   diff(prev, next) {
@@ -793,6 +875,7 @@ class Component extends DCLogic {
 
   async pushDiff() {
     if (!this.cloudCfg()) return;
+    if (!this._pulled) return;
     if (this._pushing) { this._again = true; return; }
     const prev = this._synced || { profiles: [], store: {} };
     const next = { profiles: this.state.profiles, store: this.state.store };
@@ -812,6 +895,7 @@ class Component extends DCLogic {
         if (r.error) throw r.error;
       }
       this._synced = JSON.parse(JSON.stringify(next));
+      this._localEdits = false;
       this._lastPush = Date.now();
       this.setState({ sync: 'ok', syncMsg: 'Live' });
     } catch (e) {
@@ -847,7 +931,7 @@ class Component extends DCLogic {
     this._chan = null;
   }
 
-  commit(fn) { this.setState(fn, () => this.persist(this.state)); }
+  commit(fn) { this._localEdits = true; this.setState(fn, () => this.persist(this.state)); }
 
   addEntry(k, e) {
     this.patchBucket(b => {
@@ -892,7 +976,7 @@ class Component extends DCLogic {
       : (delta === 0 ? 'Same as yesterday' : (delta > 0 ? '+' + this.dur(delta) + ' vs yesterday' : '\u2212' + this.dur(-delta) + ' vs yesterday'));
 
     const mkNav = (k, label) => ({
-      label: label, go: () => this.setState({ view: k }),
+      label: label, go: () => this.setState({ view: k, navOpen: false }),
       bg: st.view === k ? 'var(--ink)' : 'transparent',
       fg: st.view === k ? 'var(--onink)' : 'var(--ink-2)',
       dot: st.view === k ? 'var(--study)' : 'var(--faint)'
@@ -1066,7 +1150,7 @@ class Component extends DCLogic {
         study: this.dur(s), brk: b ? this.dur(b) : '\u2014',
         studyPct: Math.round(s / Math.max(maxM, t) * 100) + '%',
         breakPct: Math.round(b / Math.max(maxM, t) * 100) + '%',
-        go: () => this.setState({ date: k, view: 'track' })
+        go: () => this.setState({ date: k, view: 'track', navOpen: false })
       };
     });
 
@@ -1077,6 +1161,10 @@ class Component extends DCLogic {
 
     return {
       isTrack: st.view === 'track', isReport: st.view === 'report', isHistory: st.view === 'history',
+      navOpen: st.navOpen === true,
+      navOpenAttr: st.navOpen ? '1' : '0',
+      openNav: () => this.setState({ navOpen: true }),
+      closeNav: () => this.setState({ navOpen: false }),
       goReport: () => this.setState({ view: 'report' }), goTrack: () => this.setState({ view: 'track' }),
       navItems: [mkNav('track', 'Track'), mkNav('report', 'Report'), mkNav('history', 'History')],
       themeIcon: dark ? '\u25D1' : '\u25D0',
@@ -1161,7 +1249,7 @@ class Component extends DCLogic {
         bg: p.id === st.activeId ? 'var(--surface)' : 'transparent',
         fg: p.id === st.activeId ? 'var(--ink)' : 'var(--muted)',
         underline: p.id === st.activeId ? 'var(--study)' : 'transparent',
-        go: () => this.setState({ activeId: p.id, editSubj: null, confirmSubj: null, confirmProfile: null, renamingProfile: false, manError: '' })
+        go: () => this.setState({ activeId: p.id, editSubj: null, confirmSubj: null, confirmProfile: null, renamingProfile: false, manError: '', navOpen: false })
       })),
       activeProfile: owner,
       addingProfile: st.addingProfile === true,
