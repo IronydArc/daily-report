@@ -1448,7 +1448,7 @@ class Component extends DCLogic {
       runSubjectChips: runSubjectChips, runSessionChips: runSessionChips,
       clock: this.clockStr(runSec), clockColor: running ? (running.type === 'break' ? BRK : STUDY) : 'var(--faint)',
       clockCaption: clockCaption,
-      runHint: running ? (running.type === 'break' ? 'Study again logs this break and starts your next study block. End session discards the break and stops \u2014 useful if you forgot to stop the timer.' : 'Stop & log saves this block and starts your break timer straight away.') : (st.runType === 'break' ? 'Break next \u2014 start it when you step away.' : ''),
+      runHint: running ? (running.type === 'break' ?) : (st.runType === 'break' ? 'Break next \u2014 start it when you step away.' : ''),
       showRunHint: !!running || st.runType === 'break',
       runBtnLabel: running ? (running.type === 'break' ? 'Study again' : 'Stop & log') : (st.runType === 'break' ? 'Start break' : 'Start studying'),
       runBtnBg: running ? 'var(--ink)' : (st.runType !== 'break' && !liveSubj.length ? 'var(--wash-4)' : (st.runType === 'break' ? BRK : STUDY)),
