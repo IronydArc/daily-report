@@ -9,10 +9,9 @@
 <x-dc>
 <helmet data-dc-atomics="">
 <title>Study Time Tracker</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta name="omelette-owns-print" content="1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://cloudflare.com">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <style>
@@ -67,8 +66,11 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
   [data-runbtn]{flex:1 1 100% !important;padding:16px 20px !important;}
   [data-manform] label{flex:1 1 140px !important;min-width:0 !important;}
   [data-manform] select,[data-manform] input{width:100% !important;}
+  [data-manform] [data-tf]{flex:1 1 100% !important;}
+  [data-manform] [data-tf] select{width:auto !important;flex:1 1 0;min-width:0;}
+  [data-manform] [data-tf] input{width:56px !important;flex:0 0 auto;}
   [data-manform] button[type=submit]{flex:1 1 100% !important;padding:13px !important;font-size:13.5px !important;}
-  [data-range]{width:88px !important;font-size:11.5px !important;}
+  [data-range]{width:118px !important;font-size:11.5px !important;}
   [data-sheet-wrap]{padding:0 0 48px !important;}
   #report-sheet{padding:26px 18px 22px !important;border-radius:0 !important;border-left:none !important;border-right:none !important;}
   [data-cal-cell]{height:58px !important;padding:6px !important;}
@@ -235,18 +237,18 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
       </sc-if>
       <div style="flex:1;"></div>
       <sc-if value="{{ notRenaming }}" hint-placeholder-val="{{ true }}">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <button onClick="{{ openRename }}" style="border:none;background:transparent;padding:0;font-size:11px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--ink);">Rename</button>
-          <sc-if value="{{ canRemoveProfile }}">
-            <button onClick="{{ askRemoveProfile }}" style="border:none;background:transparent;padding:0;font-size:11px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--danger);">Remove</button>
-          </sc-if>
+        <div style="display:flex;align-items:center;">
+          <button onClick="{{ openRename }}" title="Edit this profile" style="width:30px;height:30px;border:1px solid var(--line-3);border-radius:8px;background:transparent;color:var(--ink-3);font-size:13px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:var(--wash);color:var(--ink);">✎</button>
         </div>
       </sc-if>
       <sc-if value="{{ renamingProfile }}">
-        <form onSubmit="{{ saveRename }}" style="display:flex;align-items:center;gap:5px;padding:8px 0;">
-          <input value="{{ profileName }}" onChange="{{ onProfileName }}" autoFocus="{{ true }}" style="width:130px;border:1px solid var(--line-4);border-radius:6px;background:var(--field);padding:5px 8px;font-size:12px;outline:none;" style-focus="border-color:var(--study);">
-          <button type="submit" style="border:1px solid var(--study);border-radius:6px;background:var(--study);color:#fff;padding:5px 10px;font-size:11px;font-weight:500;cursor:pointer;">Save</button>
+        <form onSubmit="{{ saveRename }}" style="display:flex;align-items:center;gap:6px;padding:8px 0;">
+          <input value="{{ profileName }}" onChange="{{ onProfileName }}" autoFocus="{{ true }}" style="width:130px;border:1px solid var(--line-4);border-radius:6px;background:var(--field);padding:6px 8px;font-size:12px;outline:none;" style-focus="border-color:var(--study);">
+          <button type="submit" style="border:1px solid var(--study);border-radius:6px;background:var(--study);color:#fff;padding:6px 11px;font-size:11px;font-weight:500;cursor:pointer;">Save</button>
           <button type="button" onClick="{{ cancelRename }}" style="border:none;background:transparent;padding:0 2px;font-size:11px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--ink);">Cancel</button>
+          <sc-if value="{{ canRemoveProfile }}">
+            <button type="button" onClick="{{ askRemoveProfile }}" style="border:1px solid var(--line-3);border-radius:6px;background:transparent;color:var(--danger);padding:6px 10px;font-size:11px;font-weight:500;cursor:pointer;" style-hover="background:var(--danger);color:#fff;border-color:var(--danger);">Remove profile</button>
+          </sc-if>
         </form>
       </sc-if>
     </div>
@@ -281,8 +283,16 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
               <div data-clock="" style="font-family:'IBM Plex Mono',monospace;font-size:52px;font-weight:400;letter-spacing:-0.03em;line-height:1;color:{{ clockColor }};">{{ clock }}</div>
               <div style="margin-top:8px;font-size:12px;color:var(--muted);">{{ clockCaption }}</div>
             </div>
-            <button data-runbtn="" onClick="{{ toggleRun }}" disabled="{{ runDisabled }}" style="flex:none;border:none;border-radius:10px;padding:14px 30px;font-size:14px;font-weight:600;letter-spacing:-0.01em;cursor:{{ runBtnCursor }};background:{{ runBtnBg }};color:{{ runBtnFg }};" style-hover="filter:brightness(1.08);">{{ runBtnLabel }}</button>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;">
+              <button data-runbtn="" onClick="{{ toggleRun }}" disabled="{{ runDisabled }}" style="flex:none;border:none;border-radius:10px;padding:14px 30px;font-size:14px;font-weight:600;letter-spacing:-0.01em;cursor:{{ runBtnCursor }};background:{{ runBtnBg }};color:{{ runBtnFg }};" style-hover="filter:brightness(1.08);">{{ runBtnLabel }}</button>
+              <sc-if value="{{ showEndSession }}">
+                <button onClick="{{ endSession }}" title="Discard this break and stop tracking" style="flex:none;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink-2);padding:13px 20px;font-size:13px;font-weight:500;cursor:pointer;" style-hover="background:var(--ink);color:var(--onink);border-color:var(--ink);">End session</button>
+              </sc-if>
+            </div>
           </div>
+          <sc-if value="{{ showRunHint }}">
+            <div style="margin-top:12px;font-size:11.5px;line-height:1.5;color:var(--muted);">{{ runHint }}</div>
+          </sc-if>
 
           <div style="margin-top:22px;padding-top:20px;border-top:1px solid var(--hair);display:flex;flex-direction:column;gap:14px;">
             <sc-if value="{{ runShowSubjects }}" hint-placeholder-val="{{ true }}">
@@ -334,14 +344,30 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
                 <option value="night">Night</option>
               </select>
             </label>
-            <label style="display:flex;flex-direction:column;gap:5px;">
+            <div data-tf="" style="display:flex;flex-direction:column;gap:5px;">
               <span style="font-size:10.5px;color:var(--muted);">From</span>
-              <input type="time" value="{{ manFrom }}" onChange="{{ onManFrom }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:6px 9px;font-size:12.5px;outline:none;">
-            </label>
-            <label style="display:flex;flex-direction:column;gap:5px;">
+              <span style="display:flex;align-items:center;gap:4px;">
+                <input value="{{ manFromT.hText }}" onChange="{{ manFromT.onHText }}" onBlur="{{ manFromT.onBlur }}" inputMode="numeric" maxLength="2" aria-label="Hour" style="width:40px;text-align:center;font-family:'IBM Plex Mono',monospace;border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 4px;font-size:12.5px;outline:none;" style-focus="border-color:var(--study);">
+                <span style="font-size:12.5px;color:var(--muted);">:</span>
+                <input value="{{ manFromT.mText }}" onChange="{{ manFromT.onMText }}" onBlur="{{ manFromT.onBlur }}" inputMode="numeric" maxLength="2" aria-label="Minute" style="width:40px;text-align:center;font-family:'IBM Plex Mono',monospace;border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 4px;font-size:12.5px;outline:none;" style-focus="border-color:var(--study);">
+                <select value="{{ manFromT.ap }}" onChange="{{ manFromT.onAp }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </span>
+            </div>
+            <div data-tf="" style="display:flex;flex-direction:column;gap:5px;">
               <span style="font-size:10.5px;color:var(--muted);">To</span>
-              <input type="time" value="{{ manTo }}" onChange="{{ onManTo }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:6px 9px;font-size:12.5px;outline:none;">
-            </label>
+              <span style="display:flex;align-items:center;gap:4px;">
+                <input value="{{ manToT.hText }}" onChange="{{ manToT.onHText }}" onBlur="{{ manToT.onBlur }}" inputMode="numeric" maxLength="2" aria-label="Hour" style="width:40px;text-align:center;font-family:'IBM Plex Mono',monospace;border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 4px;font-size:12.5px;outline:none;" style-focus="border-color:var(--study);">
+                <span style="font-size:12.5px;color:var(--muted);">:</span>
+                <input value="{{ manToT.mText }}" onChange="{{ manToT.onMText }}" onBlur="{{ manToT.onBlur }}" inputMode="numeric" maxLength="2" aria-label="Minute" style="width:40px;text-align:center;font-family:'IBM Plex Mono',monospace;border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 4px;font-size:12.5px;outline:none;" style-focus="border-color:var(--study);">
+                <select value="{{ manToT.ap }}" onChange="{{ manToT.onAp }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </span>
+            </div>
             <button type="submit" style="border:none;border-radius:7px;background:var(--ink);color:var(--onink);padding:8px 16px;font-size:12.5px;font-weight:500;cursor:pointer;" style-hover="background:var(--study);color:#fff;">Add entry</button>
           </form>
           <sc-if value="{{ manError }}">
@@ -362,12 +388,93 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
                     </div>
                   </sc-if>
                   <sc-if value="{{ r.isEntry }}">
-                    <div style="display:flex;align-items:center;gap:14px;padding:9px 2px;border-bottom:1px solid var(--hair);" style-hover="background:var(--wash-3);">
+                    <div style="display:flex;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px solid var(--hair);" style-hover="background:var(--wash-3);">
                       <span style="width:3px;height:22px;border-radius:2px;flex:none;background:{{ r.color }};"></span>
-                      <span data-range="" style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-2);flex:none;width:106px;">{{ r.range }}</span>
-                      <span style="flex:1;min-width:0;font-size:13px;letter-spacing:-0.01em;color:{{ r.nameColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.name }}</span>
+                      <span data-range="" style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-2);flex:none;width:152px;">{{ r.range }}</span>
+                      <span style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;">
+                        <span style="min-width:0;font-size:13px;letter-spacing:-0.01em;color:{{ r.nameColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.name }}</span>
+                        <sc-if value="{{ r.isAuto }}">
+                          <span title="Gap between two study blocks" style="flex:none;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted-2);border:1px solid var(--line-3);border-radius:4px;padding:1px 5px;">auto</span>
+                        </sc-if>
+                      </span>
                       <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;flex:none;color:var(--ink);">{{ r.dur }}</span>
-                      <button onClick="{{ r.remove }}" style="flex:none;width:20px;height:20px;border:none;background:transparent;color:var(--faint);font-size:15px;line-height:1;cursor:pointer;padding:0;" style-hover="color:var(--danger);">×</button>
+                      <sc-if value="{{ r.canEdit }}" hint-placeholder-val="{{ true }}">
+                        <span style="flex:none;position:relative;display:flex;">
+                          <button onClick="{{ r.openMenu }}" title="Entry options" style="width:28px;height:28px;border:none;border-radius:7px;background:transparent;color:var(--muted);font-size:15px;line-height:1;cursor:pointer;" style-hover="background:var(--wash);color:var(--ink);">⋯</button>
+                          <sc-if value="{{ r.menuOpen }}">
+                            <span>
+                              <span onClick="{{ r.closeMenu }}" style="position:fixed;top:0;right:0;bottom:0;left:0;z-index:18;"></span>
+                              <span style="position:absolute;top:30px;right:0;z-index:22;display:flex;flex-direction:column;min-width:136px;background:var(--surface);border:1px solid var(--line-3);border-radius:9px;box-shadow:var(--shadow-2);overflow:hidden;">
+                                <button onClick="{{ r.startEdit }}" style="border:none;background:transparent;text-align:left;padding:10px 13px;font-size:12.5px;color:var(--ink);cursor:pointer;" style-hover="background:var(--wash-2);">Edit</button>
+                                <button onClick="{{ r.askDelete }}" style="border:none;border-top:1px solid var(--hair);background:transparent;text-align:left;padding:10px 13px;font-size:12.5px;color:var(--danger);cursor:pointer;" style-hover="background:var(--wash-2);">Delete</button>
+                              </span>
+                            </span>
+                          </sc-if>
+                        </span>
+                      </sc-if>
+                      <sc-if value="{{ r.isAuto }}">
+                        <span style="flex:none;width:28px;"></span>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ r.isConfirm }}">
+                    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px 14px;margin:6px 0;border:1px solid var(--danger);border-radius:10px;">
+                      <span style="flex:1;min-width:180px;font-size:12px;line-height:1.5;color:var(--ink-2);">Delete {{ r.name }}, {{ r.range }}?</span>
+                      <button onClick="{{ r.doDelete }}" style="border:1px solid var(--danger);border-radius:7px;background:transparent;color:var(--danger);padding:6px 12px;font-size:11.5px;font-weight:500;cursor:pointer;" style-hover="background:var(--danger);color:#fff;">Delete</button>
+                      <button onClick="{{ r.cancelDelete }}" style="border:none;background:transparent;padding:0 2px;font-size:11.5px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--ink);">Cancel</button>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ r.isEdit }}">
+                    <div style="padding:16px 14px;margin:6px 0;border:1px solid var(--line-4);border-radius:10px;background:var(--surface);">
+                      <form data-manform="" onSubmit="{{ r.saveEdit }}" style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;">
+                        <label style="display:flex;flex-direction:column;gap:5px;">
+                          <span style="font-size:10.5px;color:var(--muted);">Type</span>
+                          <select value="{{ r.editType }}" onChange="{{ r.onEditType }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
+                            <option value="study">Study</option>
+                            <option value="break">Break</option>
+                          </select>
+                        </label>
+                        <label style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:150px;">
+                          <span style="font-size:10.5px;color:var(--muted);">Subject</span>
+                          <select value="{{ r.editSubject }}" onChange="{{ r.onEditSubject }}" disabled="{{ r.editSubjectDisabled }}" style="width:100%;border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
+                            <sc-for list="{{ r.subjOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
+                          </select>
+                        </label>
+                        <label style="display:flex;flex-direction:column;gap:5px;">
+                          <span style="font-size:10.5px;color:var(--muted);">Session</span>
+                          <select value="{{ r.editSession }}" onChange="{{ r.onEditSession }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
+                            <option value="morning">Morning</option>
+                            <option value="afternoon">Afternoon</option>
+                            <option value="night">Night</option>
+                          </select>
+                        </label>
+                        <div data-tf="" style="display:flex;flex-direction:column;gap:5px;">
+              <span style="font-size:10.5px;color:var(--muted);">From</span>
+              <span style="display:flex;align-items:center;gap:4px;">
+                <input value="{{ r.editFrom.hText }}" onChange="{{ r.editFrom.onHText }}" onBlur="{{ r.editFrom.onBlur }}" inputMode="numeric" maxLength="2" aria-label="Hour" style="width:40px;text-align:center;font-family:'IBM Plex Mono',monospace;border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 4px;font-size:12.5px;outline:none;" style-focus="border-color:var(--study);">
+                <span style="font-size:12.5px;color:var(--muted);">:</span>
+                <input value="{{ r.editFrom.mText }}" onChange="{{ r.editFrom.onMText }}" onBlur="{{ r.editFrom.onBlur }}" inputMode="numeric" maxLength="2" aria-label="Minute" style="width:40px;text-align:center;font-family:'IBM Plex Mono',monospace;border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 4px;font-size:12.5px;outline:none;" style-focus="border-color:var(--study);">
+                <select value="{{ r.editFrom.ap }}" onChange="{{ r.editFrom.onAp }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </span>
+            </div>
+                        <div data-tf="" style="display:flex;flex-direction:column;gap:5px;">
+              <span style="font-size:10.5px;color:var(--muted);">To</span>
+              <span style="display:flex;align-items:center;gap:4px;">
+                <input value="{{ r.editTo.hText }}" onChange="{{ r.editTo.onHText }}" onBlur="{{ r.editTo.onBlur }}" inputMode="numeric" maxLength="2" aria-label="Hour" style="width:40px;text-align:center;font-family:'IBM Plex Mono',monospace;border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 4px;font-size:12.5px;outline:none;" style-focus="border-color:var(--study);">
+                <span style="font-size:12.5px;color:var(--muted);">:</span>
+                <input value="{{ r.editTo.mText }}" onChange="{{ r.editTo.onMText }}" onBlur="{{ r.editTo.onBlur }}" inputMode="numeric" maxLength="2" aria-label="Minute" style="width:40px;text-align:center;font-family:'IBM Plex Mono',monospace;border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 4px;font-size:12.5px;outline:none;" style-focus="border-color:var(--study);">
+                <select value="{{ r.editTo.ap }}" onChange="{{ r.editTo.onAp }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </span>
+            </div>
+                        <button type="submit" style="border:none;border-radius:7px;background:var(--ink);color:var(--onink);padding:8px 16px;font-size:12.5px;font-weight:500;cursor:pointer;" style-hover="background:var(--study);color:#fff;">Save</button>
+                        <button type="button" onClick="{{ r.cancelEdit }}" style="border:none;background:transparent;padding:8px 4px;font-size:11.5px;color:var(--muted);text-decoration:underline;cursor:pointer;" style-hover="color:var(--ink);">Cancel</button>
+                      </form>
                     </div>
                   </sc-if>
                 </div>
@@ -453,34 +560,28 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
               </div>
             </sc-if>
 
-            <div style="padding:20px 0 18px;border-bottom:1px solid var(--line-2);">
-              <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Sessions</div>
-              <div style="display:flex;align-items:baseline;gap:12px;padding-bottom:7px;border-bottom:1px solid var(--line-2);font-size:9.5px;letter-spacing:0.11em;text-transform:uppercase;color:var(--muted-2);">
-                <span style="flex:1;">Session</span>
-                <span style="flex:none;width:66px;text-align:right;">Study</span>
-                <span style="flex:none;width:66px;text-align:right;">Break</span>
-                <span data-hide-sm="" style="flex:none;width:150px;text-align:right;">Covered</span>
-              </div>
-              <sc-for list="{{ sessionRows }}" as="s" hint-placeholder-count="3">
-                <div style="display:flex;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--hair-2);">
-                  <span style="flex:1;font-size:12.5px;letter-spacing:-0.01em;color:{{ s.nameColor }};">{{ s.name }}</span>
-                  <span style="flex:none;width:66px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:{{ s.studyColor }};">{{ s.study }}</span>
-                  <span style="flex:none;width:66px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:{{ s.breakColor }};">{{ s.brk }}</span>
-                  <span data-hide-sm="" style="flex:none;width:150px;text-align:right;font-size:11px;color:var(--muted);line-height:1.35;">{{ s.covered }}</span>
-                </div>
-              </sc-for>
-            </div>
-
             <sc-if value="{{ hasEntries }}">
               <div style="padding:20px 0 18px;border-bottom:1px solid var(--line-2);">
-                <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Log</div>
-                <sc-for list="{{ logRows }}" as="r" hint-placeholder-count="6">
-                  <div style="display:flex;align-items:center;gap:12px;padding:6.5px 0;border-bottom:1px solid var(--hair-3);">
-                    <span style="width:3px;height:15px;border-radius:2px;flex:none;background:{{ r.color }};"></span>
-                    <span data-range="" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-2);flex:none;width:100px;">{{ r.range }}</span>
-                    <span style="flex:1;min-width:0;font-size:12.5px;letter-spacing:-0.01em;color:{{ r.nameColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.name }}</span>
-                    <span data-hide-sm="" style="flex:none;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted-2);width:74px;text-align:right;">{{ r.sess }}</span>
-                    <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;flex:none;width:58px;text-align:right;">{{ r.dur }}</span>
+                <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Sections</div>
+                <sc-for list="{{ reportRows }}" as="r" hint-placeholder-count="6">
+                  <div>
+                    <sc-if value="{{ r.isHead }}">
+                      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:15px 0 6px;border-bottom:1px solid var(--line-2);">
+                        <span style="font-family:'Newsreader',serif;font-size:15px;letter-spacing:-0.01em;">{{ r.name }}</span>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">{{ r.meta }}</span>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ r.isEntry }}">
+                      <div style="display:flex;align-items:center;gap:12px;padding:6.5px 0;border-bottom:1px solid var(--hair-3);">
+                        <span style="width:3px;height:15px;border-radius:2px;flex:none;background:{{ r.color }};"></span>
+                        <span data-range="" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-2);flex:none;width:146px;">{{ r.range }}</span>
+                        <span style="flex:1;min-width:0;font-size:12.5px;letter-spacing:-0.01em;color:{{ r.nameColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.name }}</span>
+                        <sc-if value="{{ r.isAuto }}">
+                          <span style="flex:none;font-size:9px;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted-2);">auto</span>
+                        </sc-if>
+                        <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;flex:none;width:58px;text-align:right;">{{ r.dur }}</span>
+                      </div>
+                    </sc-if>
                   </div>
                 </sc-for>
               </div>
@@ -537,7 +638,17 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
         </div>
 
         <div>
-          <div style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Recent days</div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:12px;">
+            <div>
+              <div style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);">Last {{ recentN }} days</div>
+              <div style="margin-top:4px;font-size:11.5px;color:var(--muted-2);">{{ recentRange }} · {{ recentCaption }}</div>
+            </div>
+            <div style="display:flex;gap:5px;flex:none;">
+              <sc-for list="{{ recentBtns }}" as="b" hint-placeholder-count="3">
+                <button onClick="{{ b.go }}" style="border-radius:7px;padding:6px 11px;font-size:11.5px;font-weight:500;cursor:pointer;border:1px solid {{ b.border }};background:{{ b.bg }};color:{{ b.fg }};">{{ b.label }}</button>
+              </sc-for>
+            </div>
+          </div>
           <sc-if value="{{ hasRecent }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;flex-direction:column;">
               <sc-for list="{{ recentDays }}" as="d" hint-placeholder-count="5">
@@ -554,7 +665,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
             </div>
           </sc-if>
           <sc-if value="{{ noRecent }}">
-            <div style="padding:30px;text-align:center;border:1px dashed var(--dash-2);border-radius:12px;color:var(--muted-2);font-size:13px;">No history yet.</div>
+            <div style="padding:30px;text-align:center;border:1px dashed var(--dash-2);border-radius:12px;color:var(--muted-2);font-size:13px;">Nothing logged in this window.</div>
           </sc-if>
         </div>
       </div>
@@ -563,7 +674,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
   </main>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;reportWidth&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:720,&quot;min&quot;:620,&quot;max&quot;:900,&quot;step&quot;:10,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Report sheet&quot;},&quot;paperTint&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ffffff&quot;,&quot;options&quot;:[&quot;#ffffff&quot;,&quot;#fcfbf7&quot;,&quot;#faf6ec&quot;,&quot;#f7f6f3&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Report sheet&quot;},&quot;showFocus&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Report sheet&quot;},&quot;supabaseUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://bdrixaegmrxuoajldrev.supabase.co&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Cloud sync&quot;},&quot;supabaseAnonKey&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;sb_publishable_md8PHNykUVYHuLinPBg41g_ri41uDEv&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Cloud sync&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;autoBreak&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Auto break&quot;},&quot;autoBreakGap&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:30,&quot;min&quot;:5,&quot;max&quot;:90,&quot;step&quot;:5,&quot;unit&quot;:&quot;min&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Auto break&quot;},&quot;reportWidth&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:720,&quot;min&quot;:620,&quot;max&quot;:900,&quot;step&quot;:10,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Report sheet&quot;},&quot;paperTint&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ffffff&quot;,&quot;options&quot;:[&quot;#ffffff&quot;,&quot;#fcfbf7&quot;,&quot;#faf6ec&quot;,&quot;#f7f6f3&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Report sheet&quot;},&quot;showFocus&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Report sheet&quot;},&quot;supabaseUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://bdrixaegmrxuoajldrev.supabase.co&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Cloud sync&quot;},&quot;supabaseAnonKey&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;sb_publishable_md8PHNykUVYHuLinPBg41g_ri41uDEv&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Cloud sync&quot;}}">
 class Component extends DCLogic {
   PAL = ['#4a6fa5','#a2683f','#4f7d68','#8a5a8f','#a1524f','#5c6a8a','#6b7a3f'];
   SK = ['morning','afternoon','night'];
@@ -584,8 +695,9 @@ class Component extends DCLogic {
     running: null,
     now: Date.now(),
     runType: 'study', runSubject: '', runSession: 'auto',
-    manType: 'study', manSubject: '', manSession: 'auto', manFrom: '', manTo: '',
+    manType: 'study', manSubject: '', manSession: 'auto', manFromMin: null, manToMin: null,
     newSubject: '', manError: '',
+    menuEntry: null, editEntry: null, editVals: null, confirmEntry: null, recentN: 14, tdraft: null,
     editSubj: null, editName: '', confirmSubj: null, showArchived: false,
     addingProfile: false, newProfile: '', renamingProfile: false, profileName: '', confirmProfile: null,
     navOpen: false
@@ -595,9 +707,35 @@ class Component extends DCLogic {
   parseKey(k) { const p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
   hhmm(m) { const t = ((Math.floor(m) % 1440) + 1440) % 1440; return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); }
   toMin(s) { if (!s || s.indexOf(':') < 0) return null; const p = s.split(':'); const h = +p[0], m = +p[1]; if (isNaN(h) || isNaN(m)) return null; return h * 60 + m; }
+  hm12(m) { const t = ((Math.round(m) % 1440) + 1440) % 1440; const h = Math.floor(t / 60), mm = t % 60; return ((h % 12) || 12) + ':' + String(mm).padStart(2, '0') + ' ' + (h < 12 ? 'AM' : 'PM'); }
+  parts12(m) { const t = ((Math.round(m) % 1440) + 1440) % 1440; const h = Math.floor(t / 60); return { h: (h % 12) || 12, m: t % 60, ap: h < 12 ? 'AM' : 'PM' }; }
+  from12(h, m, ap) { let hh = (+h) % 12; if (ap === 'PM') hh += 12; return hh * 60 + (+m); }
+  r5(m) { return (((Math.round(m / 5) * 5) % 1440) + 1440) % 1440; }
+  mOptsFor(m) {
+    const out = [];
+    for (let i = 0; i < 60; i += 5) out.push(i);
+    if (out.indexOf(+m) < 0) out.push(+m);
+    out.sort((a, b) => a - b);
+    return out.map(v => ({ v: String(v), label: String(v).padStart(2, '0') }));
+  }
+  autoFill(list, on, gapMax) {
+    const arr = (list || []).slice().sort((a, b) => a.from - b.from);
+    const out = [];
+    arr.forEach((e, i) => {
+      out.push(e);
+      const n = arr[i + 1];
+      if (!on || !n) return;
+      if (e.type === 'break' || n.type === 'break') return;
+      if (e.session !== n.session) return;
+      const gap = n.from - e.to;
+      if (gap < 1 || gap > gapMax) return;
+      out.push({ id: 'auto-' + e.id, type: 'break', subject: null, session: e.session, from: e.to, to: n.from, auto: true });
+    });
+    return out;
+  }
   dur(m) {
     const r = Math.round(m);
-    if (r <= 0) return '0m';
+    if (r <= 0) return m > 0.02 ? '<1m' : '0m';
     if (r < 60) return r + 'm';
     const h = Math.floor(r / 60), mm = r % 60;
     return mm ? h + 'h ' + mm + 'm' : h + 'h';
@@ -613,11 +751,12 @@ class Component extends DCLogic {
   days() { return this.bucket().days || {}; }
   day(k) { return this.days()[k] || { entries: [], notes: '' }; }
   subj(id) { return this.subjects().find(s => s.id === id) || null; }
-  patchBucket(fn) {
+  patchBucket(fn, pid) {
     this.commit(st => {
-      const b = st.store[st.activeId] || { subjects: [], days: {} };
+      const id = pid && st.store[pid] ? pid : st.activeId;
+      const b = st.store[id] || { subjects: [], days: {} };
       const store = Object.assign({}, st.store);
-      store[st.activeId] = Object.assign({}, b, fn(b, st));
+      store[id] = Object.assign({}, b, fn(b, st));
       return { store: store };
     });
   }
@@ -684,6 +823,8 @@ class Component extends DCLogic {
     window.addEventListener('beforeprint', this._bp);
     this._fo = () => { if (this.cloudCfg() && !this._pushing) this.pull(); };
     window.addEventListener('focus', this._fo);
+    this._vis = () => { if (document.hidden && this._localEdits) { clearTimeout(this._pt); this.pushDiff(); } };
+    document.addEventListener('visibilitychange', this._vis);
     if (this.cloudCfg()) setTimeout(() => { this.pull().then(() => this.subscribe()); }, 250);
   }
   componentDidUpdate() { if (this._appliedTheme !== this.state.theme) this.applyTheme(this.state.theme); }
@@ -695,6 +836,7 @@ class Component extends DCLogic {
     this.unsubscribe();
     window.removeEventListener('beforeprint', this._bp);
     window.removeEventListener('focus', this._fo);
+    document.removeEventListener('visibilitychange', this._vis);
   }
 
   persist(s) {
@@ -730,6 +872,10 @@ class Component extends DCLogic {
 
   async pull() {
     if (!this.cloudCfg()) { this.setState({ sync: 'off', syncMsg: '' }); return; }
+    if (this._pulling) return;
+    if (this._pushing) { this._pullAfter = true; return; }
+    if (this._pulled && this._localEdits) { clearTimeout(this._pt); await this.pushDiff(); }
+    this._pulling = true;
     this.setState({ sync: 'busy', syncMsg: 'Loading\u2026' });
     try {
       const sb = await this.sb();
@@ -766,7 +912,7 @@ class Component extends DCLogic {
       Object.keys(store).forEach(pid => Object.keys(store[pid].days).forEach(k => store[pid].days[k].entries.sort((x, y) => x.from - y.from)));
       const activeId0 = this.state.activeId;
       this._synced = JSON.parse(JSON.stringify({ profiles: profiles, store: store }));
-      if (!this._pulled && this._localEdits) this.mergeLocal(profiles, store);
+      if (this._localEdits) this.mergeLocal(profiles, store);
       this._pulled = true;
       const activeId = store[activeId0] ? activeId0 : profiles[0].id;
       this.setState({ profiles: profiles, store: store, activeId: activeId }, () => {
@@ -778,6 +924,8 @@ class Component extends DCLogic {
     } catch (e) {
       this.setState({ sync: 'err', syncMsg: (e && e.message) || 'Sync failed' });
       if (!this._pulled) { clearTimeout(this._retry); this._retry = setTimeout(() => this.pull(), 8000); }
+    } finally {
+      this._pulling = false;
     }
   }
 
@@ -903,6 +1051,7 @@ class Component extends DCLogic {
     }
     this._pushing = false;
     if (this._again) { this._again = false; this.queueSync(); }
+    if (this._pullAfter) { this._pullAfter = false; setTimeout(() => this.pull(), 250); }
   }
 
   async subscribe() {
@@ -933,14 +1082,14 @@ class Component extends DCLogic {
 
   commit(fn) { this._localEdits = true; this.setState(fn, () => this.persist(this.state)); }
 
-  addEntry(k, e) {
+  addEntry(k, e, pid) {
     this.patchBucket(b => {
       const days = Object.assign({}, b.days);
       const d = days[k] ? Object.assign({}, days[k]) : { entries: [], notes: '' };
       d.entries = d.entries.concat([e]).sort((x, y) => x.from - y.from);
       days[k] = d;
       return { days: days };
-    });
+    }, pid);
   }
 
   renderVals() {
@@ -952,9 +1101,14 @@ class Component extends DCLogic {
     const dt = this.parseKey(dayK);
     const running = st.running && (!st.running.profileId || st.running.profileId === st.activeId) ? st.running : null;
 
+    const autoOn = P.autoBreak !== false;
+    const gapMax = P.autoBreakGap == null ? 30 : +P.autoBreakGap;
+    const withAuto = this.autoFill(entries, autoOn, gapMax);
+    const studyCount = withAuto.filter(e => e.type !== 'break').length;
+
     let studyM = 0, breakM = 0;
     const perSubj = {};
-    entries.forEach(e => {
+    withAuto.forEach(e => {
       const m = this.eDur(e);
       if (e.type === 'break') breakM += m;
       else { studyM += m; perSubj[e.subject] = (perSubj[e.subject] || 0) + m; }
@@ -966,7 +1120,7 @@ class Component extends DCLogic {
     const yk = this.dk(new Date(dt.getTime() - 86400000));
     const allDays = this.days();
     const dayStudy = k => (allDays[k] ? allDays[k].entries : []).reduce((a, e) => a + (e.type === 'break' ? 0 : this.eDur(e)), 0);
-    const dayBreak = k => (allDays[k] ? allDays[k].entries : []).reduce((a, e) => a + (e.type === 'break' ? this.eDur(e) : 0), 0);
+    const dayBreak = k => this.autoFill(allDays[k] ? allDays[k].entries : [], autoOn, gapMax).reduce((a, e) => a + (e.type === 'break' ? this.eDur(e) : 0), 0);
     const yStudy = dayStudy(yk);
     let streak = 0, cur = new Date(dt.getTime());
     while (dayStudy(this.dk(cur)) > 0 && streak < 400) { streak++; cur = new Date(cur.getTime() - 86400000); }
@@ -1040,16 +1194,28 @@ class Component extends DCLogic {
 
     const runSubjName = running && running.type !== 'break' ? (this.subj(running.subject) ? this.subj(running.subject).name : 'Subject') : '';
     const clockCaption = running
-      ? (running.type === 'break' ? 'Break \u00b7 started ' + this.hhmm(running.startMin) : runSubjName + ' \u00b7 started ' + this.hhmm(running.startMin))
+      ? (running.type === 'break' ? 'Break \u00b7 started ' + this.hm12(running.startMin) : runSubjName + ' \u00b7 started ' + this.hm12(running.startMin))
       : (st.runType === 'break' ? 'Break timer ready' : 'Ready \u2014 press start when you sit down');
 
     const toggleRun = () => {
       if (running) {
-        const now = new Date();
-        const to = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
-        const e = { id: 'e' + Date.now(), type: running.type, subject: running.subject, session: running.session === 'auto' ? this.autoSess(running.startMin) : running.session, from: running.startMin, to: to };
-        if (this.eDur(e) >= 0.1) this.addEntry(running.dateKey, e);
-        this.commit(() => ({ running: null }));
+        let el = (Date.now() - (running.startedAt || Date.now())) / 60000;
+        if (!(el > 0)) el = 0;
+        if (el > 1439) el = 1439;
+        const from = running.startMin;
+        const to = (((from + el) % 1440) + 1440) % 1440;
+        const e = { id: 'e' + Date.now() + '-' + Math.floor(Math.random() * 1e4), type: running.type, subject: running.type === 'break' ? null : running.subject, session: running.session === 'auto' ? this.autoSess(from) : running.session, from: from, to: to };
+        const pid = running.profileId || st.activeId;
+        const key = running.dateKey || dayK;
+        const nextType = running.type === 'break' ? 'study' : 'break';
+        const nextSubject = nextType === 'break' ? null : (running.subject || curRun);
+        const canNext = nextType === 'break' || !!nextSubject;
+        const tnow = Date.now();
+        const nextRunning = canNext ? { type: nextType, subject: nextSubject, session: running.session, startMin: to, startedAt: tnow, dateKey: this.dk(new Date()), profileId: pid } : null;
+        this.setState({ running: nextRunning, now: tnow, date: key, runType: nextType, menuEntry: null, editEntry: null, confirmEntry: null }, () => {
+          if (el >= 0.017) this.addEntry(key, e, pid);
+          else this.commit(() => ({}));
+        });
       } else {
         if (st.runType !== 'break' && !liveSubj.length) return;
         const now = new Date();
@@ -1058,55 +1224,117 @@ class Component extends DCLogic {
       }
     };
 
+    const hOpts = [];
+    for (let hi = 1; hi <= 12; hi++) hOpts.push({ v: String(hi), label: String(hi) });
+    const nowMin = (() => { const n = new Date(); return n.getHours() * 60 + n.getMinutes(); })();
+    const lastEnd = entries.length ? entries[entries.length - 1].to : null;
+    const manFromMin = st.manFromMin == null ? (lastEnd != null && lastEnd <= nowMin ? this.r5(lastEnd) : this.r5(Math.max(0, nowMin - 30))) : st.manFromMin;
+    const manToMin = st.manToMin == null ? this.r5(nowMin) : st.manToMin;
+    const draft = st.tdraft;
+    const timeField = (key, val, set) => {
+      const p = this.parts12(val);
+      const dh = !!draft && draft.key === key && draft.part === 'h';
+      const dm = !!draft && draft.key === key && draft.part === 'm';
+      const clean = v => String(v == null ? '' : v).replace(/[^0-9]/g, '').slice(0, 2);
+      return {
+        ap: p.ap,
+        hText: dh ? draft.text : String(p.h),
+        mText: dm ? draft.text : String(p.m).padStart(2, '0'),
+        onHText: ev2 => {
+          const t = clean(ev2.target.value);
+          this.setState({ tdraft: { key: key, part: 'h', text: t } });
+          const n = parseInt(t, 10);
+          if (t && n >= 1 && n <= 12) set(this.from12(n, p.m, p.ap));
+        },
+        onMText: ev2 => {
+          const t = clean(ev2.target.value);
+          this.setState({ tdraft: { key: key, part: 'm', text: t } });
+          const n = parseInt(t, 10);
+          if (t !== '' && n >= 0 && n <= 59) set(this.from12(p.h, n, p.ap));
+        },
+        onBlur: () => this.setState({ tdraft: null }),
+        onAp: ev2 => set(this.from12(p.h, p.m, ev2.target.value))
+      };
+    };
     const addManual = ev => {
       ev.preventDefault();
-      const f = this.toMin(st.manFrom), t = this.toMin(st.manTo);
-      if (f === null || t === null) { this.setState({ manError: 'Enter both a start and an end time.' }); return; }
-      if (f === t) { this.setState({ manError: 'Start and end cannot be the same.' }); return; }
+      const f = manFromMin, t = manToMin;
+      if (f === t) { this.setState({ manError: 'Start and end must be different times.' }); return; }
       if (st.manType !== 'break' && !liveSubj.length) { this.setState({ manError: 'Add a subject first.' }); return; }
-      const e = { id: 'e' + Date.now(), type: st.manType, subject: st.manType === 'break' ? null : curMan, session: st.manSession === 'auto' ? this.autoSess(f) : st.manSession, from: f, to: t };
+      const e = { id: 'e' + Date.now() + '-' + Math.floor(Math.random() * 1e4), type: st.manType, subject: st.manType === 'break' ? null : curMan, session: st.manSession === 'auto' ? this.autoSess(f) : st.manSession, from: f, to: t };
       this.addEntry(dayK, e);
-      this.setState({ manFrom: '', manTo: '', manError: '' });
+      this.setState({ manFromMin: null, manToMin: null, manError: '' });
     };
 
-    const rowFor = e => {
+    const patchDay = fn => this.patchBucket(b => {
+      const days = Object.assign({}, b.days);
+      const dd = Object.assign({}, days[dayK] || { entries: [], notes: '' });
+      dd.entries = fn((dd.entries || []).slice());
+      days[dayK] = dd;
+      return { days: days };
+    });
+    const subjOpts = liveSubj.map(s => ({ v: s.id, label: s.name }));
+    const setEV = patch => this.setState(x => ({ editVals: Object.assign({}, x.editVals || {}, patch) }));
+    const rowFor = (e, ro) => {
       const s = e.type === 'break' ? null : this.subj(e.subject);
+      const editing = !ro && !e.auto && st.editEntry === e.id;
+      const confirming = !ro && !e.auto && st.confirmEntry === e.id;
+      const v = st.editVals || {};
+      const vType = (editing ? (v.type || e.type) : e.type) === 'break' ? 'break' : 'study';
+      const vSubjRaw = v.subject == null ? e.subject : v.subject;
+      const vSubj = liveSubj.some(x => x.id === vSubjRaw) ? vSubjRaw : (liveSubj[0] ? liveSubj[0].id : '');
+      const vFrom = v.from == null ? e.from : v.from;
+      const vTo = v.to == null ? e.to : v.to;
       return {
-        isHead: false, isEntry: true,
+        isHead: false,
+        isEntry: !editing && !confirming,
+        isEdit: editing, isConfirm: confirming,
+        isAuto: !!e.auto, canEdit: !ro && !e.auto,
         color: e.type === 'break' ? BRK : (s ? this.tint(s.color) : 'var(--muted-2)'),
-        range: this.hhmm(e.from) + ' \u2013 ' + this.hhmm(e.to),
+        range: this.hm12(e.from) + ' \u2013 ' + this.hm12(e.to),
         name: e.type === 'break' ? 'Break' : (s ? s.name : 'Removed subject'),
         nameColor: e.type === 'break' ? BRK : 'var(--ink)',
         sess: this.SHORT[e.session] || '\u2014',
         dur: this.dur(this.eDur(e)),
-        remove: () => this.patchBucket(b => {
-          const days = Object.assign({}, b.days);
-          const dd = Object.assign({}, days[dayK]);
-          dd.entries = (dd.entries || []).filter(z => z.id !== e.id);
-          days[dayK] = dd;
-          return { days: days };
-        })
+        menuOpen: !ro && st.menuEntry === e.id,
+        openMenu: () => this.setState(x => ({ menuEntry: x.menuEntry === e.id ? null : e.id })),
+        closeMenu: () => this.setState({ menuEntry: null }),
+        startEdit: () => this.setState({ menuEntry: null, confirmEntry: null, editEntry: e.id, editVals: { type: e.type, subject: e.subject, session: e.session, from: e.from, to: e.to } }),
+        cancelEdit: () => this.setState({ editEntry: null, editVals: null }),
+        askDelete: () => this.setState({ menuEntry: null, editEntry: null, confirmEntry: e.id }),
+        cancelDelete: () => this.setState({ confirmEntry: null }),
+        doDelete: () => { this.setState({ confirmEntry: null, menuEntry: null }); patchDay(list => list.filter(z => z.id !== e.id)); },
+        editType: vType,
+        onEditType: ev2 => setEV({ type: ev2.target.value }),
+        editSubject: vSubj,
+        onEditSubject: ev2 => setEV({ subject: ev2.target.value }),
+        editSubjectDisabled: vType === 'break',
+        editSession: v.session || e.session || 'morning',
+        onEditSession: ev2 => setEV({ session: ev2.target.value }),
+        subjOpts: subjOpts,
+        editFrom: timeField('ef' + e.id, vFrom, x => setEV({ from: x })),
+        editTo: timeField('et' + e.id, vTo, x => setEV({ to: x })),
+        saveEdit: ev2 => {
+          if (ev2 && ev2.preventDefault) ev2.preventDefault();
+          const upd = { type: vType, subject: vType === 'break' ? null : vSubj, session: v.session || e.session, from: vFrom, to: vTo };
+          this.setState({ editEntry: null, editVals: null });
+          if (upd.from === upd.to) return;
+          patchDay(list => list.map(z => z.id === e.id ? Object.assign({}, z, upd) : z).sort((x, y) => x.from - y.from));
+        }
       };
     };
 
     const trackRows = [];
-    const sessionRows = [];
+    const reportRows = [];
     this.SK.forEach(k => {
-      const list = entries.filter(e => e.session === k);
+      const list = withAuto.filter(e => e.session === k);
       const sM = list.reduce((a, e) => a + (e.type === 'break' ? 0 : this.eDur(e)), 0);
       const bM = list.reduce((a, e) => a + (e.type === 'break' ? this.eDur(e) : 0), 0);
-      const names = [];
-      list.forEach(e => { if (e.type !== 'break') { const s = this.subj(e.subject); if (s && names.indexOf(s.name) < 0) names.push(s.name); } });
-      sessionRows.push({
-        name: this.SN[k],
-        nameColor: list.length ? 'var(--ink)' : 'var(--faint-2)',
-        study: sM ? this.dur(sM) : '\u2014', studyColor: sM ? STUDY : 'var(--faint)',
-        brk: bM ? this.dur(bM) : '\u2014', breakColor: bM ? BRK : 'var(--faint)',
-        covered: names.length ? names.join(', ') : '\u2014'
-      });
       if (list.length) {
-        trackRows.push({ isHead: true, isEntry: false, name: this.SN[k], meta: this.dur(sM) + ' study \u00b7 ' + this.dur(bM) + ' break' });
-        list.forEach(e => trackRows.push(rowFor(e)));
+        const head = { isHead: true, isEntry: false, name: this.SN[k], meta: this.dur(sM) + ' study \u00b7 ' + this.dur(bM) + ' break' };
+        trackRows.push(head);
+        reportRows.push(head);
+        list.forEach(e => { trackRows.push(rowFor(e, false)); reportRows.push(rowFor(e, true)); });
       }
     });
 
@@ -1142,11 +1370,21 @@ class Component extends DCLogic {
       });
     }
 
-    const recentDays = Object.keys(allDays).filter(k => this.day(k).entries.length).sort().reverse().slice(0, 14).map(k => {
+    const recentN = st.recentN || 14;
+    const today0 = new Date(); today0.setHours(0, 0, 0, 0);
+    const winStart = new Date(today0.getTime() - (recentN - 1) * 86400000);
+    const todayKey = this.dk(today0), yestKey = this.dk(new Date(today0.getTime() - 86400000));
+    const fmtShort = dd => dd.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+    const recentKeys = Object.keys(allDays).filter(k => {
+      if (!this.day(k).entries.length) return false;
+      const dd = this.parseKey(k);
+      return dd >= winStart && dd <= today0;
+    }).sort().reverse();
+    const recentDays = recentKeys.map(k => {
       const s = dayStudy(k), b = dayBreak(k), t = Math.max(s + b, 1);
       const dd = this.parseKey(k);
       return {
-        label: dd.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }),
+        label: k === todayKey ? 'Today' : (k === yestKey ? 'Yesterday' : dd.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })),
         study: this.dur(s), brk: b ? this.dur(b) : '\u2014',
         studyPct: Math.round(s / Math.max(maxM, t) * 100) + '%',
         breakPct: Math.round(b / Math.max(maxM, t) * 100) + '%',
@@ -1185,8 +1423,8 @@ class Component extends DCLogic {
       showFocus: P.showFocus === true,
       streakLabel: streak ? streak + (streak === 1 ? ' day' : ' days') : '\u2014',
       deltaLabel: deltaLabel,
-      trackSummary: entries.length ? entries.length + ' entries \u00b7 ' + this.dur(studyM) + ' studied \u00b7 ' + this.dur(breakM) + ' on break' : 'No entries yet',
-      entryCountLabel: entries.length + (entries.length === 1 ? ' entry' : ' entries') + ' \u00b7 ' + this.dur(total) + ' tracked',
+      trackSummary: withAuto.length ? withAuto.length + (withAuto.length === 1 ? ' entry \u00b7 ' : ' entries \u00b7 ') + this.dur(studyM) + ' studied \u00b7 ' + this.dur(breakM) + ' on break' : 'No entries yet',
+      entryCountLabel: studyCount + (studyCount === 1 ? ' section' : ' sections') + ' \u00b7 ' + this.dur(total) + ' tracked',
 
       subjectList: subjectList,
       archivedList: archivedList,
@@ -1210,25 +1448,29 @@ class Component extends DCLogic {
       runSubjectChips: runSubjectChips, runSessionChips: runSessionChips,
       clock: this.clockStr(runSec), clockColor: running ? (running.type === 'break' ? BRK : STUDY) : 'var(--faint)',
       clockCaption: clockCaption,
-      runBtnLabel: running ? 'Stop & log' : (st.runType === 'break' ? 'Start break' : 'Start studying'),
+      runHint: running ? (running.type === 'break' ? 'Study again logs this break and starts your next study block. End session discards the break and stops \u2014 useful if you forgot to stop the timer.' : 'Stop & log saves this block and starts your break timer straight away.') : (st.runType === 'break' ? 'Break next \u2014 start it when you step away.' : ''),
+      showRunHint: !!running || st.runType === 'break',
+      runBtnLabel: running ? (running.type === 'break' ? 'Study again' : 'Stop & log') : (st.runType === 'break' ? 'Start break' : 'Start studying'),
       runBtnBg: running ? 'var(--ink)' : (st.runType !== 'break' && !liveSubj.length ? 'var(--wash-4)' : (st.runType === 'break' ? BRK : STUDY)),
       runBtnCursor: !running && st.runType !== 'break' && !liveSubj.length ? 'not-allowed' : 'pointer',
       runBtnFg: running ? 'var(--onink)' : (st.runType !== 'break' && !liveSubj.length ? 'var(--muted-2)' : onTint),
       runDisabled: !running && st.runType !== 'break' && liveSubj.length === 0,
       toggleRun: toggleRun,
+      showEndSession: !!running && running.type === 'break',
+      endSession: () => this.commit(() => ({ running: null, runType: 'study' })),
 
-      manType: st.manType, manSubject: curMan, manSession: st.manSession, manFrom: st.manFrom, manTo: st.manTo,
+      manType: st.manType, manSubject: curMan, manSession: st.manSession,
+      manFromT: timeField('manFrom', manFromMin, v => this.setState({ manFromMin: v })),
+      manToT: timeField('manTo', manToMin, v => this.setState({ manToMin: v })),
       manSubjectDisabled: st.manType === 'break',
       onManType: e => this.setState({ manType: e.target.value }),
       onManSubject: e => this.setState({ manSubject: e.target.value }),
       onManSession: e => this.setState({ manSession: e.target.value }),
-      onManFrom: e => this.setState({ manFrom: e.target.value }),
-      onManTo: e => this.setState({ manTo: e.target.value }),
       addManual: addManual, manError: st.manError,
 
-      hasEntries: entries.length > 0, noEntries: entries.length === 0,
+      hasEntries: withAuto.length > 0, noEntries: withAuto.length === 0,
       hasStudy: subjectBars.length > 0,
-      trackRows: trackRows, sessionRows: sessionRows, logRows: entries.map(rowFor), subjectBars: subjectBars,
+      trackRows: trackRows, reportRows: reportRows, subjectBars: subjectBars,
 
       notes: d.notes || '',
       onNotes: e => {
@@ -1283,7 +1525,7 @@ class Component extends DCLogic {
       },
       canRemoveProfile: st.profiles.length > 1,
       confirmProfileOpen: st.confirmProfile === st.activeId,
-      askRemoveProfile: () => this.setState({ confirmProfile: st.activeId }),
+      askRemoveProfile: () => this.setState({ confirmProfile: st.activeId, renamingProfile: false }),
       cancelRemoveProfile: () => this.setState({ confirmProfile: null }),
       removeProfile: () => this.commit(x => {
         const profiles = x.profiles.filter(p => p.id !== x.activeId);
@@ -1300,6 +1542,13 @@ class Component extends DCLogic {
       prevMonth: () => { const p = new Date(my, mm - 2, 1); this.setState({ month: this.dk(p).slice(0, 7) }); },
       nextMonth: () => { const p = new Date(my, mm, 1); this.setState({ month: this.dk(p).slice(0, 7) }); },
       calCells: calCells, recentDays: recentDays,
+      recentN: String(recentN),
+      recentRange: fmtShort(winStart) + ' \u2013 ' + fmtShort(today0),
+      recentCaption: recentKeys.length + ' of ' + recentN + ' days logged',
+      recentBtns: [7, 14, 30].map(n => {
+        const on = recentN === n;
+        return { label: n + 'd', bg: on ? 'var(--ink)' : 'transparent', fg: on ? 'var(--onink)' : 'var(--ink-2)', border: on ? 'var(--ink)' : 'var(--line)', go: () => this.setState({ recentN: n }) };
+      }),
       hasRecent: recentDays.length > 0, noRecent: recentDays.length === 0
     };
   }
