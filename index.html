@@ -314,7 +314,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
             <sc-if value="{{ runShowKinds }}">
               <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                 <span style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);width:66px;flex:none;">Break for</span>
-                <sc-for list="{{ runKindChips }}" as="c" hint-placeholder-count="5">
+                <sc-for list="{{ runKindChips }}" as="c" hint-placeholder-count="6">
                   <button onClick="{{ c.go }}" style="border-radius:7px;padding:6px 11px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};">{{ c.name }}</button>
                 </sc-for>
               </div>
@@ -334,7 +334,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
             <label style="display:flex;flex-direction:column;gap:5px;">
               <span style="font-size:10.5px;color:var(--muted);">Type</span>
               <select value="{{ manType }}" onChange="{{ onManType }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
-                <sc-for list="{{ typeOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
+                <sc-for list="{{ typeOpts }}" as="o" hint-placeholder-count="7"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
               </select>
             </label>
             <label style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:170px;">
@@ -440,7 +440,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
                         <label style="display:flex;flex-direction:column;gap:5px;">
                           <span style="font-size:10.5px;color:var(--muted);">Type</span>
                           <select value="{{ r.editType }}" onChange="{{ r.onEditType }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
-                            <sc-for list="{{ r.typeOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
+                            <sc-for list="{{ r.typeOpts }}" as="o" hint-placeholder-count="7"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
                           </select>
                         </label>
                         <label style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:150px;">
@@ -695,11 +695,12 @@ class Component extends DCLogic {
   SK = ['morning','afternoon','night'];
   SN = { morning:'Morning Session', afternoon:'Afternoon Session', night:'Night Session' };
   SHORT = { morning:'Morning', afternoon:'Afternoon', night:'Night' };
-  BK = ['rest','meal','work','meeting','class', 'other'];
-  BN = { rest:'Break', meal:'Meal', work:'Work', meeting:'Meeting', class:'Class', other:'Away' };
-  BLABEL = { rest:'Rest', meal:'Meal', work:'Work', meeting:'Meeting', class:'Class', other:'Other' };
+  BK = ['rest','meal','work','meeting','class','errand','other'];
+  CHIPK = ['rest','meal','work','meeting','class','other'];
+  BN = { rest:'Break', meal:'Meal', work:'Work', meeting:'Meeting', class:'Class', errand:'Errand', other:'Away' };
+  BLABEL = { rest:'Rest', meal:'Meal', work:'Work', meeting:'Meeting', class:'Class', errand:'Errand', other:'Other' };
   BSEL = [{ v:'study', label:'Study' },{ v:'rest', label:'Break' },{ v:'meal', label:'Meal' },{ v:'work', label:'Work' },{ v:'meeting', label:'Meeting' },{ v:'class', label:'Class' },{ v:'other', label:'Away' }];
-  AWAYK = { work:1, other:1 };
+  AWAYK = { work:1, meeting:1, class:1, errand:1, other:1 };
   DEVKEY = 'studylog.device';
   KEY = 'studylog.v2';
   LEGACY = 'studylog.v1';
@@ -1332,7 +1333,7 @@ class Component extends DCLogic {
         this.syncTimer(next, pid);
       } else this.setState({ runKind: k });
     };
-    const runKindChips = this.BK.map(k => {
+    const runKindChips = this.CHIPK.map(k => {
       const c = chip(curKind === k, this.AWAYK[k] ? AWAY : BRK);
       return { name: this.BLABEL[k], bg: c.bg, fg: c.fg, border: c.border, go: () => setRunKind(k) };
     });
