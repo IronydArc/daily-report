@@ -695,11 +695,11 @@ class Component extends DCLogic {
   SK = ['morning','afternoon','night'];
   SN = { morning:'Morning Session', afternoon:'Afternoon Session', night:'Night Session' };
   SHORT = { morning:'Morning', afternoon:'Afternoon', night:'Night' };
-  BK = ['rest','meal','work','errand','other'];
-  BN = { rest:'Break', meal:'Meal', work:'Work', errand:'Errand', other:'Away' };
-  BLABEL = { rest:'Rest', meal:'Meal', work:'Work', errand:'Errand', other:'Other' };
-  BSEL = [{ v:'study', label:'Study' },{ v:'rest', label:'Break' },{ v:'meal', label:'Meal' },{ v:'work', label:'Work' },{ v:'errand', label:'Errand' },{ v:'other', label:'Away' }];
-  AWAYK = { work:1, errand:1, other:1 };
+  BK = ['rest','meal','work','meeting','class', 'other'];
+  BN = { rest:'Break', meal:'Meal', work:'Work', meeting:'Meeting', class:'Class', other:'Away' };
+  BLABEL = { rest:'Rest', meal:'Meal', work:'Work', meeting:'Meeting', class:'Class', other:'Other' };
+  BSEL = [{ v:'study', label:'Study' },{ v:'rest', label:'Break' },{ v:'meal', label:'Meal' },{ v:'work', label:'Work' },{ v:'meeting', label:'Meeting' },{ v:'class', label:'Class' },{ v:'other', label:'Away' }];
+  AWAYK = { work:1, other:1 };
   DEVKEY = 'studylog.device';
   KEY = 'studylog.v2';
   LEGACY = 'studylog.v1';
