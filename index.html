@@ -1322,7 +1322,7 @@ class Component extends DCLogic {
       return { name: o.n, bg: c.bg, fg: c.fg, border: c.border, go: () => this.setState({ runSession: o.k }) };
     });
 
-    const runIsBreak = running ? running.type === 'break' : st.runType === 'break';
+    const runIsBreak = st.runType === 'break';
     const curKind = running && running.type === 'break' ? this.bk(running) : (this.BK.indexOf(st.runKind) >= 0 ? st.runKind : 'rest');
     const setRunKind = k => {
       const run = this.state.running;
@@ -1360,8 +1360,8 @@ class Component extends DCLogic {
         const nextSubject = nextType === 'break' ? null : (running.subject || curRun);
         const canNext = nextType === 'break' || !!nextSubject;
         const tnow = Date.now();
-        const nextRunning = canNext ? { type: nextType, kind: nextType === 'break' ? 'rest' : null, subject: nextSubject, session: running.session, startMin: to, startedAt: tnow, dateKey: this.dk(new Date()), profileId: pid, device: this.devId() } : null;
-        this.setState(x => ({ running: nextRunning, timers: this.putTimer(x.timers, pid, nextRunning), now: tnow, date: key, runType: nextType, runKind: 'rest', menuEntry: null, editEntry: null, confirmEntry: null }), () => {
+        const nextRunning = canNext ? { type: nextType, kind: nextType === 'break' ? curKind : null, subject: nextSubject, session: running.session, startMin: to, startedAt: tnow, dateKey: this.dk(new Date()), profileId: pid, device: this.devId() } : null;
+        this.setState(x => ({ running: nextRunning, timers: this.putTimer(x.timers, pid, nextRunning), now: tnow, date: key, runType: nextType, menuEntry: null, editEntry: null, confirmEntry: null }), () => {
           if (el >= 0.017) this.addEntry(key, e, pid);
           else this.commit(() => ({}));
           this.syncTimer(nextRunning, pid);
