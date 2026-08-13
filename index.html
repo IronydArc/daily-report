@@ -23,7 +23,7 @@
 --hair:rgba(28,26,23,0.06);--hair-2:rgba(28,26,23,0.055);--hair-3:rgba(28,26,23,0.05);
 --wash:rgba(28,26,23,0.06);--wash-2:rgba(28,26,23,0.03);--wash-3:rgba(28,26,23,0.025);--wash-4:rgba(28,26,23,0.07);
 --dash:rgba(28,26,23,0.16);--dash-2:rgba(28,26,23,0.14);
---study:#3f6b57;--break:#b0703f;--danger:#a1524f;--rule:#1c1a17;
+--study:#3f6b57;--break:#b0703f;--away:#5c6a8a;--danger:#a1524f;--rule:#1c1a17;
 --shadow:0 1px 2px rgba(28,26,23,0.04);--shadow-2:0 2px 14px rgba(28,26,23,0.07);
 }
 [data-theme="dark"]{
@@ -34,7 +34,7 @@
 --hair:rgba(236,231,221,0.08);--hair-2:rgba(236,231,221,0.075);--hair-3:rgba(236,231,221,0.07);
 --wash:rgba(236,231,221,0.08);--wash-2:rgba(236,231,221,0.05);--wash-3:rgba(236,231,221,0.045);--wash-4:rgba(236,231,221,0.09);
 --dash:rgba(236,231,221,0.2);--dash-2:rgba(236,231,221,0.18);
---study:#72ab8e;--break:#d2965f;--danger:#d08079;--rule:#ece7dd;
+--study:#72ab8e;--break:#d2965f;--away:#94a3c9;--danger:#d08079;--rule:#ece7dd;
 --shadow:0 1px 2px rgba(0,0,0,0.35);--shadow-2:0 2px 18px rgba(0,0,0,0.45);
 }
 html,body{margin:0;padding:0;height:100%;background:var(--bg);}
@@ -131,6 +131,12 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
         <span style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);">Break</span>
         <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500;color:var(--break);">{{ breakLabel }}</span>
       </div>
+      <sc-if value="{{ showAway }}">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;">
+          <span style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);">Away</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500;color:var(--away);">{{ awayLabel }}</span>
+        </div>
+      </sc-if>
     </div>
 
     <div style="margin:22px 20px 0;padding-top:16px;border-top:1px solid var(--line-3);">
@@ -308,6 +314,14 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
                 </sc-if>
               </div>
             </sc-if>
+            <sc-if value="{{ runShowKinds }}">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);width:66px;flex:none;">Break for</span>
+                <sc-for list="{{ runKindChips }}" as="c" hint-placeholder-count="5">
+                  <button onClick="{{ c.go }}" style="border-radius:7px;padding:6px 11px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};">{{ c.name }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
               <span style="font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--muted);width:66px;flex:none;">Session</span>
               <sc-for list="{{ runSessionChips }}" as="c" hint-placeholder-count="4">
@@ -323,8 +337,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
             <label style="display:flex;flex-direction:column;gap:5px;">
               <span style="font-size:10.5px;color:var(--muted);">Type</span>
               <select value="{{ manType }}" onChange="{{ onManType }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
-                <option value="study">Study</option>
-                <option value="break">Break</option>
+                <sc-for list="{{ typeOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
               </select>
             </label>
             <label style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:170px;">
@@ -430,8 +443,7 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
                         <label style="display:flex;flex-direction:column;gap:5px;">
                           <span style="font-size:10.5px;color:var(--muted);">Type</span>
                           <select value="{{ r.editType }}" onChange="{{ r.onEditType }}" style="border:1px solid var(--line-4);border-radius:7px;background:var(--field);padding:7px 9px;font-size:12.5px;outline:none;cursor:pointer;">
-                            <option value="study">Study</option>
-                            <option value="break">Break</option>
+                            <sc-for list="{{ r.typeOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}">{{ o.label }}</option></sc-for>
                           </select>
                         </label>
                         <label style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:150px;">
@@ -526,6 +538,12 @@ input[type=time]{font-family:'IBM Plex Mono',monospace;}
                 <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Break</div>
                 <div style="margin-top:6px;font-family:'Newsreader',serif;font-size:34px;line-height:1;letter-spacing:-0.02em;color:var(--break);">{{ breakLabel }}</div>
               </div>
+              <sc-if value="{{ showAway }}">
+                <div style="flex:1;">
+                  <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Away</div>
+                  <div style="margin-top:6px;font-family:'Newsreader',serif;font-size:34px;line-height:1;letter-spacing:-0.02em;color:var(--away);">{{ awayLabel }}</div>
+                </div>
+              </sc-if>
               <sc-if value="{{ showFocus }}">
                 <div style="flex:1;">
                   <div style="font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Focus</div>
@@ -680,6 +698,12 @@ class Component extends DCLogic {
   SK = ['morning','afternoon','night'];
   SN = { morning:'Morning Session', afternoon:'Afternoon Session', night:'Night Session' };
   SHORT = { morning:'Morning', afternoon:'Afternoon', night:'Night' };
+  BK = ['rest','meal','work','errand','other'];
+  BN = { rest:'Break', meal:'Meal', work:'Work', errand:'Errand', other:'Away' };
+  BLABEL = { rest:'Rest', meal:'Meal', work:'Work', errand:'Errand', other:'Other' };
+  BSEL = [{ v:'study', label:'Study' },{ v:'rest', label:'Break' },{ v:'meal', label:'Meal' },{ v:'work', label:'Work' },{ v:'errand', label:'Errand' },{ v:'other', label:'Away' }];
+  AWAYK = { work:1, errand:1, other:1 };
+  DEVKEY = 'studylog.device';
   KEY = 'studylog.v2';
   LEGACY = 'studylog.v1';
 
@@ -694,7 +718,8 @@ class Component extends DCLogic {
     sync: 'off', syncMsg: '', updatedAt: 0,
     running: null,
     now: Date.now(),
-    runType: 'study', runSubject: '', runSession: 'auto',
+    runType: 'study', runKind: 'rest', runSubject: '', runSession: 'auto',
+    timers: {},
     manType: 'study', manSubject: '', manSession: 'auto', manFromMin: null, manToMin: null,
     newSubject: '', manError: '',
     menuEntry: null, editEntry: null, editVals: null, confirmEntry: null, recentN: 14, tdraft: null,
@@ -746,6 +771,99 @@ class Component extends DCLogic {
   }
   autoSess(min) { const t = ((min % 1440) + 1440) % 1440; return t < 720 ? 'morning' : t < 1080 ? 'afternoon' : 'night'; }
   eDur(e) { let d = e.to - e.from; if (d < 0) d += 1440; return d; }
+  bk(e) { return e && e.type === 'break' ? (this.BK.indexOf(e.kind) >= 0 ? e.kind : 'rest') : null; }
+  isAway(e) { return !!(e && e.type === 'break' && this.AWAYK[this.bk(e)]); }
+  devName() {
+    let ua = '';
+    try { ua = navigator.userAgent || ''; } catch (e) {}
+    if (/iPad|Tablet/i.test(ua)) return 'Tablet';
+    if (/iPhone|Android|Mobile/i.test(ua)) return 'Phone';
+    if (/Macintosh|Mac OS/i.test(ua)) return 'Mac';
+    if (/Windows/i.test(ua)) return 'PC';
+    return 'Device';
+  }
+  devId() {
+    if (this._dev) return this._dev;
+    let v = null;
+    try { v = localStorage.getItem(this.DEVKEY); } catch (e) {}
+    if (!v) {
+      v = this.devName() + '-' + Math.random().toString(36).slice(2, 7);
+      try { localStorage.setItem(this.DEVKEY, v); } catch (e) {}
+    }
+    this._dev = v;
+    return v;
+  }
+  devLabel(id) { const s = String(id || ''); const i = s.lastIndexOf('-'); return (i > 0 ? s.slice(0, i) : s) || 'another device'; }
+  runFromRow(r) {
+    if (!r || !r.profile_id) return null;
+    const type = r.type === 'break' ? 'break' : 'study';
+    return {
+      type: type, kind: type === 'break' ? (r.kind || 'rest') : null,
+      subject: type === 'break' ? null : (r.subject_id || null),
+      session: r.session || 'auto', startMin: +r.start_min, startedAt: +r.started_at,
+      dateKey: String(r.date_key || '').slice(0, 10), profileId: r.profile_id, device: r.device || ''
+    };
+  }
+  rowFromRun(run) {
+    return {
+      profile_id: run.profileId, type: run.type,
+      kind: run.type === 'break' ? (run.kind || 'rest') : null,
+      subject_id: run.type === 'break' ? null : (run.subject || null),
+      session: run.session || 'auto', start_min: run.startMin, started_at: Math.round(run.startedAt),
+      date_key: run.dateKey, device: run.device || this.devId(), updated_at: new Date().toISOString()
+    };
+  }
+  runSig(r) {
+    if (!r) return '';
+    return [r.type, r.kind || '', r.subject || '', r.session || '', Math.round((r.startMin || 0) * 100), Math.round(r.startedAt || 0), r.dateKey || '', r.profileId || ''].join('|');
+  }
+  timersSig(map) { const m = map || {}; return Object.keys(m).sort().map(k => k + '>' + this.runSig(m[k])).join(','); }
+  putTimer(map, pid, run) { const m = Object.assign({}, map || {}); if (run) m[pid] = run; else delete m[pid]; return m; }
+  async syncTimer(run, pid) {
+    if (!this.cloudCfg()) return;
+    const seq = (this._tseq = (this._tseq || 0) + 1);
+    this._timerDirty = true;
+    try {
+      const sb = await this.sb();
+      const r = run
+        ? await sb.from('timers').upsert([this.rowFromRun(run)], { onConflict: 'profile_id' })
+        : await sb.from('timers').delete().match({ profile_id: pid });
+      if (r.error) throw r.error;
+      if (seq !== this._tseq) return;
+      this._timerDirty = false;
+      this._timerSeen = true;
+      this._lastPush = Date.now();
+      if (this.state.sync === 'err') this.setState({ sync: 'ok', syncMsg: 'Live' });
+    } catch (e) {
+      if (seq !== this._tseq) return;
+      this.setState({ sync: 'err', syncMsg: 'Timer not shared \u2014 retrying' });
+      clearTimeout(this._tr);
+      this._tr = setTimeout(() => { if (seq === this._tseq) this.syncTimer(run, pid); }, 5000);
+    }
+  }
+  async pollTimers() {
+    if (!this.cloudCfg() || this._timerDirty || this._pushing || this._pulling) return;
+    try {
+      const sb = await this.sb();
+      const r = await sb.from('timers').select('*');
+      if (r.error) return;
+      this.applyTimers(r.data || []);
+    } catch (e) {}
+  }
+  applyTimers(rows) {
+    if (this._timerDirty) return;
+    const map = {};
+    (rows || []).forEach(r => { const run = this.runFromRow(r); if (run) map[run.profileId] = run; });
+    const st = this.state;
+    const mine = map[st.activeId] || null;
+    const local = st.running && (!st.running.profileId || st.running.profileId === st.activeId) ? st.running : null;
+    if (!mine && local && !this._timerSeen) { this.syncTimer(local, local.profileId || st.activeId); return; }
+    this._timerSeen = true;
+    if (this.runSig(mine) === this.runSig(local) && this.timersSig(map) === this.timersSig(st.timers)) return;
+    const patch = { timers: map, running: mine, now: Date.now() };
+    if (mine) { patch.runType = mine.type; if (mine.type === 'break') patch.runKind = this.bk(mine); }
+    this.setState(patch, () => this.persist(this.state));
+  }
   bucket(st) { st = st || this.state; return st.store[st.activeId] || { subjects: [], days: {} }; }
   subjects() { return this.bucket().subjects || []; }
   days() { return this.bucket().days || {}; }
@@ -801,7 +919,11 @@ class Component extends DCLogic {
       this.setState({ theme: theme });
     }
     this.applyTheme(theme);
-    this._t = setInterval(() => { if (this.state.running) this.setState({ now: Date.now() }); }, 1000);
+    this._t = setInterval(() => {
+      if (this.state.running) this.setState({ now: Date.now() });
+      const gap = this.state.running ? 20000 : 60000;
+      if (this.cloudCfg() && Date.now() - (this._tp || 0) > gap) { this._tp = Date.now(); this.pollTimers(); }
+    }, 1000);
     this._bp = () => {
       const el = document.getElementById('report-sheet');
       if (!el) return;
@@ -833,6 +955,7 @@ class Component extends DCLogic {
     clearTimeout(this._pt);
     clearTimeout(this._rt);
     clearTimeout(this._retry);
+    clearTimeout(this._tr);
     this.unsubscribe();
     window.removeEventListener('beforeprint', this._bp);
     window.removeEventListener('focus', this._fo);
@@ -882,11 +1005,15 @@ class Component extends DCLogic {
       const res = await Promise.all([
         sb.from('profiles').select('id,name,created_at').order('created_at'),
         sb.from('subjects').select('id,profile_id,name,color,archived'),
-        sb.from('entries').select('id,profile_id,day,type,subject_id,session,from_min,to_min'),
-        sb.from('day_notes').select('profile_id,day,notes')
+        sb.from('entries').select('*'),
+        sb.from('day_notes').select('profile_id,day,notes'),
+        sb.from('timers').select('*')
       ]);
-      res.forEach(r => { if (r.error) throw r.error; });
+      const tRes = res[4];
+      const timerRows = tRes && !tRes.error ? (tRes.data || []) : null;
+      res.slice(0, 4).forEach(r => { if (r.error) throw r.error; });
       const pr = res[0].data || [], su = res[1].data || [], en = res[2].data || [], no = res[3].data || [];
+      this._hasKind = en.length ? Object.prototype.hasOwnProperty.call(en[0], 'kind') : true;
       if (!pr.length) {
         this._synced = { profiles: [], store: {} };
         this._pulled = true;
@@ -906,7 +1033,7 @@ class Component extends DCLogic {
       su.forEach(s => { const bk = store[s.profile_id]; if (bk) bk.subjects.push({ id: s.id, name: s.name, color: s.color, archived: !!s.archived }); });
       en.forEach(e => {
         const d = dayOf(e.profile_id, String(e.day).slice(0, 10));
-        if (d) d.entries.push({ id: e.id, type: e.type, subject: e.subject_id, session: e.session, from: e.from_min, to: e.to_min });
+        if (d) d.entries.push({ id: e.id, type: e.type, kind: e.kind || null, subject: e.subject_id, session: e.session, from: e.from_min, to: e.to_min });
       });
       no.forEach(n => { const d = dayOf(n.profile_id, String(n.day).slice(0, 10)); if (d) d.notes = n.notes || ''; });
       Object.keys(store).forEach(pid => Object.keys(store[pid].days).forEach(k => store[pid].days[k].entries.sort((x, y) => x.from - y.from)));
@@ -919,6 +1046,7 @@ class Component extends DCLogic {
         const s = this.state;
         try { localStorage.setItem(this.cacheKey(), JSON.stringify({ profiles: s.profiles, activeId: s.activeId, store: s.store, running: s.running, theme: s.theme, updatedAt: Date.now() })); } catch (e) {}
         this.setState({ sync: 'ok', syncMsg: 'Live' });
+        if (timerRows) this.applyTimers(timerRows);
         this.queueSync();
       });
     } catch (e) {
@@ -994,8 +1122,12 @@ class Component extends DCLogic {
         (od.entries || []).forEach(e => { oldE[e.id] = e; });
         (nd.entries || []).forEach(e => {
           const o = oldE[e.id];
-          if (!o || o.type !== e.type || o.subject !== e.subject || o.session !== e.session || o.from !== e.from || o.to !== e.to)
-            upE.push({ id: e.id, profile_id: pid, day: k, type: e.type, subject_id: e.subject || null, session: e.session, from_min: e.from, to_min: e.to });
+          const kOld = o ? (o.kind || null) : null, kNew = e.kind || null;
+          if (!o || o.type !== e.type || kOld !== kNew || o.subject !== e.subject || o.session !== e.session || o.from !== e.from || o.to !== e.to) {
+            const row = { id: e.id, profile_id: pid, day: k, type: e.type, subject_id: e.subject || null, session: e.session, from_min: e.from, to_min: e.to };
+            if (this._hasKind !== false) row.kind = kNew;
+            upE.push(row);
+          }
         });
         const keepE = (nd.entries || []).map(e => e.id);
         (od.entries || []).forEach(e => { if (keepE.indexOf(e.id) < 0) delE.push(e.id); });
@@ -1066,7 +1198,7 @@ class Component extends DCLogic {
         }, 500);
       };
       const ch = sb.channel('studylog-shared');
-      ['profiles', 'subjects', 'entries', 'day_notes'].forEach(t => {
+      ['profiles', 'subjects', 'entries', 'day_notes', 'timers'].forEach(t => {
         ch.on('postgres_changes', { event: '*', schema: 'public', table: t }, hit);
       });
       ch.subscribe();
@@ -1095,7 +1227,7 @@ class Component extends DCLogic {
   renderVals() {
     const st = this.state, P = this.props;
     const dark = st.theme === 'dark';
-    const STUDY = 'var(--study)', BRK = 'var(--break)';
+    const STUDY = 'var(--study)', BRK = 'var(--break)', AWAY = 'var(--away)';
     const dayK = st.date, d = this.day(dayK);
     const entries = d.entries.slice().sort((a, b) => a.from - b.from);
     const dt = this.parseKey(dayK);
@@ -1106,11 +1238,11 @@ class Component extends DCLogic {
     const withAuto = this.autoFill(entries, autoOn, gapMax);
     const studyCount = withAuto.filter(e => e.type !== 'break').length;
 
-    let studyM = 0, breakM = 0;
+    let studyM = 0, breakM = 0, awayM = 0;
     const perSubj = {};
     withAuto.forEach(e => {
       const m = this.eDur(e);
-      if (e.type === 'break') breakM += m;
+      if (e.type === 'break') { if (this.isAway(e)) awayM += m; else breakM += m; }
       else { studyM += m; perSubj[e.subject] = (perSubj[e.subject] || 0) + m; }
     });
 
@@ -1120,7 +1252,7 @@ class Component extends DCLogic {
     const yk = this.dk(new Date(dt.getTime() - 86400000));
     const allDays = this.days();
     const dayStudy = k => (allDays[k] ? allDays[k].entries : []).reduce((a, e) => a + (e.type === 'break' ? 0 : this.eDur(e)), 0);
-    const dayBreak = k => this.autoFill(allDays[k] ? allDays[k].entries : [], autoOn, gapMax).reduce((a, e) => a + (e.type === 'break' ? this.eDur(e) : 0), 0);
+    const dayBreak = k => this.autoFill(allDays[k] ? allDays[k].entries : [], autoOn, gapMax).reduce((a, e) => a + (e.type === 'break' && !this.isAway(e) ? this.eDur(e) : 0), 0);
     const yStudy = dayStudy(yk);
     let streak = 0, cur = new Date(dt.getTime());
     while (dayStudy(this.dk(cur)) > 0 && streak < 400) { streak++; cur = new Date(cur.getTime() - 86400000); }
@@ -1192,9 +1324,27 @@ class Component extends DCLogic {
       return { name: o.n, bg: c.bg, fg: c.fg, border: c.border, go: () => this.setState({ runSession: o.k }) };
     });
 
+    const runIsBreak = running ? running.type === 'break' : st.runType === 'break';
+    const curKind = running && running.type === 'break' ? this.bk(running) : (this.BK.indexOf(st.runKind) >= 0 ? st.runKind : 'rest');
+    const setRunKind = k => {
+      const run = this.state.running;
+      if (run && run.type === 'break') {
+        const next = Object.assign({}, run, { kind: k });
+        const pid = next.profileId || st.activeId;
+        this.commit(x => ({ runKind: k, running: next, timers: this.putTimer(x.timers, pid, next) }));
+        this.syncTimer(next, pid);
+      } else this.setState({ runKind: k });
+    };
+    const runKindChips = this.BK.map(k => {
+      const c = chip(curKind === k, this.AWAYK[k] ? AWAY : BRK);
+      return { name: this.BLABEL[k], bg: c.bg, fg: c.fg, border: c.border, go: () => setRunKind(k) };
+    });
+
     const runSubjName = running && running.type !== 'break' ? (this.subj(running.subject) ? this.subj(running.subject).name : 'Subject') : '';
+    const runDev = running && running.device && running.device !== this.devId() ? this.devLabel(running.device) : '';
+    const runLead = running ? (running.type === 'break' ? this.BN[this.bk(running)] : runSubjName) : '';
     const clockCaption = running
-      ? (running.type === 'break' ? 'Break \u00b7 started ' + this.hm12(running.startMin) : runSubjName + ' \u00b7 started ' + this.hm12(running.startMin))
+      ? runLead + ' \u00b7 started ' + this.hm12(running.startMin) + (runDev ? ' \u00b7 on ' + runDev : '')
       : (st.runType === 'break' ? 'Break timer ready' : 'Start the session');
 
     const toggleRun = () => {
@@ -1204,23 +1354,29 @@ class Component extends DCLogic {
         if (el > 1439) el = 1439;
         const from = running.startMin;
         const to = (((from + el) % 1440) + 1440) % 1440;
-        const e = { id: 'e' + Date.now() + '-' + Math.floor(Math.random() * 1e4), type: running.type, subject: running.type === 'break' ? null : running.subject, session: running.session === 'auto' ? this.autoSess(from) : running.session, from: from, to: to };
+        const wasBreak = running.type === 'break';
+        const e = { id: 'e' + Date.now() + '-' + Math.floor(Math.random() * 1e4), type: running.type, kind: wasBreak ? this.bk(running) : null, subject: wasBreak ? null : running.subject, session: running.session === 'auto' ? this.autoSess(from) : running.session, from: from, to: to };
         const pid = running.profileId || st.activeId;
         const key = running.dateKey || dayK;
-        const nextType = running.type === 'break' ? 'study' : 'break';
+        const nextType = wasBreak ? 'study' : 'break';
         const nextSubject = nextType === 'break' ? null : (running.subject || curRun);
         const canNext = nextType === 'break' || !!nextSubject;
         const tnow = Date.now();
-        const nextRunning = canNext ? { type: nextType, subject: nextSubject, session: running.session, startMin: to, startedAt: tnow, dateKey: this.dk(new Date()), profileId: pid } : null;
-        this.setState({ running: nextRunning, now: tnow, date: key, runType: nextType, menuEntry: null, editEntry: null, confirmEntry: null }, () => {
+        const nextRunning = canNext ? { type: nextType, kind: nextType === 'break' ? 'rest' : null, subject: nextSubject, session: running.session, startMin: to, startedAt: tnow, dateKey: this.dk(new Date()), profileId: pid, device: this.devId() } : null;
+        this.setState(x => ({ running: nextRunning, timers: this.putTimer(x.timers, pid, nextRunning), now: tnow, date: key, runType: nextType, runKind: 'rest', menuEntry: null, editEntry: null, confirmEntry: null }), () => {
           if (el >= 0.017) this.addEntry(key, e, pid);
           else this.commit(() => ({}));
+          this.syncTimer(nextRunning, pid);
         });
       } else {
         if (st.runType !== 'break' && !liveSubj.length) return;
         const now = new Date();
         const startMin = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
-        this.commit(x => ({ running: { type: x.runType, subject: curRun, session: x.runSession, startMin: startMin, startedAt: Date.now(), dateKey: this.dk(now), profileId: x.activeId }, now: Date.now(), date: this.dk(now) }));
+        const pid = st.activeId;
+        const isBrk = st.runType === 'break';
+        const run = { type: st.runType, kind: isBrk ? curKind : null, subject: isBrk ? null : curRun, session: st.runSession, startMin: startMin, startedAt: Date.now(), dateKey: this.dk(now), profileId: pid, device: this.devId() };
+        this.commit(x => ({ running: run, timers: this.putTimer(x.timers, pid, run), now: Date.now(), date: this.dk(now) }));
+        this.syncTimer(run, pid);
       }
     };
 
@@ -1260,8 +1416,9 @@ class Component extends DCLogic {
       ev.preventDefault();
       const f = manFromMin, t = manToMin;
       if (f === t) { this.setState({ manError: 'Start and end must be different times.' }); return; }
-      if (st.manType !== 'break' && !liveSubj.length) { this.setState({ manError: 'Add a subject first.' }); return; }
-      const e = { id: 'e' + Date.now() + '-' + Math.floor(Math.random() * 1e4), type: st.manType, subject: st.manType === 'break' ? null : curMan, session: st.manSession === 'auto' ? this.autoSess(f) : st.manSession, from: f, to: t };
+      const manIsStudy = st.manType === 'study';
+      if (manIsStudy && !liveSubj.length) { this.setState({ manError: 'Add a subject first.' }); return; }
+      const e = { id: 'e' + Date.now() + '-' + Math.floor(Math.random() * 1e4), type: manIsStudy ? 'study' : 'break', kind: manIsStudy ? null : st.manType, subject: manIsStudy ? curMan : null, session: st.manSession === 'auto' ? this.autoSess(f) : st.manSession, from: f, to: t };
       this.addEntry(dayK, e);
       this.setState({ manFromMin: null, manToMin: null, manError: '' });
     };
@@ -1280,7 +1437,9 @@ class Component extends DCLogic {
       const editing = !ro && !e.auto && st.editEntry === e.id;
       const confirming = !ro && !e.auto && st.confirmEntry === e.id;
       const v = st.editVals || {};
-      const vType = (editing ? (v.type || e.type) : e.type) === 'break' ? 'break' : 'study';
+      const eSel = e.type === 'break' ? this.bk(e) : 'study';
+      const vSel = editing && v.sel ? v.sel : eSel;
+      const vType = vSel === 'study' ? 'study' : 'break';
       const vSubjRaw = v.subject == null ? e.subject : v.subject;
       const vSubj = liveSubj.some(x => x.id === vSubjRaw) ? vSubjRaw : (liveSubj[0] ? liveSubj[0].id : '');
       const vFrom = v.from == null ? e.from : v.from;
@@ -1290,22 +1449,23 @@ class Component extends DCLogic {
         isEntry: !editing && !confirming,
         isEdit: editing, isConfirm: confirming,
         isAuto: !!e.auto, canEdit: !ro && !e.auto,
-        color: e.type === 'break' ? BRK : (s ? this.tint(s.color) : 'var(--muted-2)'),
+        color: e.type === 'break' ? (this.isAway(e) ? AWAY : BRK) : (s ? this.tint(s.color) : 'var(--muted-2)'),
         range: this.hm12(e.from) + ' \u2013 ' + this.hm12(e.to),
-        name: e.type === 'break' ? 'Break' : (s ? s.name : 'Removed subject'),
-        nameColor: e.type === 'break' ? BRK : 'var(--ink)',
+        name: e.type === 'break' ? this.BN[this.bk(e)] : (s ? s.name : 'Removed subject'),
+        nameColor: e.type === 'break' ? (this.isAway(e) ? AWAY : BRK) : 'var(--ink)',
         sess: this.SHORT[e.session] || '\u2014',
         dur: this.dur(this.eDur(e)),
         menuOpen: !ro && st.menuEntry === e.id,
         openMenu: () => this.setState(x => ({ menuEntry: x.menuEntry === e.id ? null : e.id })),
         closeMenu: () => this.setState({ menuEntry: null }),
-        startEdit: () => this.setState({ menuEntry: null, confirmEntry: null, editEntry: e.id, editVals: { type: e.type, subject: e.subject, session: e.session, from: e.from, to: e.to } }),
+        startEdit: () => this.setState({ menuEntry: null, confirmEntry: null, editEntry: e.id, editVals: { sel: eSel, subject: e.subject, session: e.session, from: e.from, to: e.to } }),
         cancelEdit: () => this.setState({ editEntry: null, editVals: null }),
         askDelete: () => this.setState({ menuEntry: null, editEntry: null, confirmEntry: e.id }),
         cancelDelete: () => this.setState({ confirmEntry: null }),
         doDelete: () => { this.setState({ confirmEntry: null, menuEntry: null }); patchDay(list => list.filter(z => z.id !== e.id)); },
-        editType: vType,
-        onEditType: ev2 => setEV({ type: ev2.target.value }),
+        editType: vSel,
+        onEditType: ev2 => setEV({ sel: ev2.target.value }),
+        typeOpts: this.BSEL,
         editSubject: vSubj,
         onEditSubject: ev2 => setEV({ subject: ev2.target.value }),
         editSubjectDisabled: vType === 'break',
@@ -1316,7 +1476,7 @@ class Component extends DCLogic {
         editTo: timeField('et' + e.id, vTo, x => setEV({ to: x })),
         saveEdit: ev2 => {
           if (ev2 && ev2.preventDefault) ev2.preventDefault();
-          const upd = { type: vType, subject: vType === 'break' ? null : vSubj, session: v.session || e.session, from: vFrom, to: vTo };
+          const upd = { type: vType, kind: vType === 'break' ? vSel : null, subject: vType === 'break' ? null : vSubj, session: v.session || e.session, from: vFrom, to: vTo };
           this.setState({ editEntry: null, editVals: null });
           if (upd.from === upd.to) return;
           patchDay(list => list.map(z => z.id === e.id ? Object.assign({}, z, upd) : z).sort((x, y) => x.from - y.from));
@@ -1329,9 +1489,10 @@ class Component extends DCLogic {
     this.SK.forEach(k => {
       const list = withAuto.filter(e => e.session === k);
       const sM = list.reduce((a, e) => a + (e.type === 'break' ? 0 : this.eDur(e)), 0);
-      const bM = list.reduce((a, e) => a + (e.type === 'break' ? this.eDur(e) : 0), 0);
+      const bM = list.reduce((a, e) => a + (e.type === 'break' && !this.isAway(e) ? this.eDur(e) : 0), 0);
+      const aM = list.reduce((a, e) => a + (this.isAway(e) ? this.eDur(e) : 0), 0);
       if (list.length) {
-        const head = { isHead: true, isEntry: false, name: this.SN[k], meta: this.dur(sM) + ' study \u00b7 ' + this.dur(bM) + ' break' };
+        const head = { isHead: true, isEntry: false, name: this.SN[k], meta: this.dur(sM) + ' study \u00b7 ' + this.dur(bM) + ' break' + (aM ? ' \u00b7 ' + this.dur(aM) + ' away' : '') };
         trackRows.push(head);
         reportRows.push(head);
         list.forEach(e => { trackRows.push(rowFor(e, false)); reportRows.push(rowFor(e, true)); });
@@ -1419,11 +1580,12 @@ class Component extends DCLogic {
       nextDay: () => this.setState({ date: this.dk(new Date(dt.getTime() + 86400000)) }),
 
       studyLabel: this.dur(studyM), breakLabel: this.dur(breakM),
+      awayLabel: this.dur(awayM), showAway: awayM > 0.02,
       focusLabel: total ? Math.round(studyM / total * 100) + '%' : '\u2014',
       showFocus: P.showFocus === true,
       streakLabel: streak ? streak + (streak === 1 ? ' day' : ' days') : '\u2014',
       deltaLabel: deltaLabel,
-      trackSummary: withAuto.length ? withAuto.length + (withAuto.length === 1 ? ' entry \u00b7 ' : ' entries \u00b7 ') + this.dur(studyM) + ' studied \u00b7 ' + this.dur(breakM) + ' on break' : 'No entries yet',
+      trackSummary: withAuto.length ? withAuto.length + (withAuto.length === 1 ? ' entry \u00b7 ' : ' entries \u00b7 ') + this.dur(studyM) + ' studied \u00b7 ' + this.dur(breakM) + ' on break' + (awayM ? ' \u00b7 ' + this.dur(awayM) + ' away' : '') : 'No entries yet',
       entryCountLabel: studyCount + (studyCount === 1 ? ' section' : ' sections') + ' \u00b7 ' + this.dur(total) + ' tracked',
 
       subjectList: subjectList,
@@ -1444,10 +1606,14 @@ class Component extends DCLogic {
       },
 
       modeBtns: [mode('study', 'Study'), mode('break', 'Break')],
-      runShowSubjects: st.runType !== 'break',
+      runShowSubjects: !runIsBreak,
+      runShowKinds: runIsBreak,
+      runKindChips: runKindChips,
       runSubjectChips: runSubjectChips, runSessionChips: runSessionChips,
-      clock: this.clockStr(runSec), clockColor: running ? (running.type === 'break' ? BRK : STUDY) : 'var(--faint)',
+      clock: this.clockStr(runSec), clockColor: running ? (running.type === 'break' ? (this.isAway(running) ? AWAY : BRK) : STUDY) : 'var(--faint)',
       clockCaption: clockCaption,
+      runHint: running ? ((runDev ? 'Running on ' + runDev + ' \u2014 the timer is shared, so stopping it here logs it everywhere. ' : '') + (running.type === 'break' ? 'Study again logs this break and starts your next study block. End session discards the break and stops \u2014 useful if you forgot to stop the timer.' : 'Stop & log saves this block and starts your break timer straight away.')) : '',
+      showRunHint: !!running,
       runBtnLabel: running ? (running.type === 'break' ? 'Study again' : 'Stop & log') : (st.runType === 'break' ? 'Start break' : 'Start studying'),
       runBtnBg: running ? 'var(--ink)' : (st.runType !== 'break' && !liveSubj.length ? 'var(--wash-4)' : (st.runType === 'break' ? BRK : STUDY)),
       runBtnCursor: !running && st.runType !== 'break' && !liveSubj.length ? 'not-allowed' : 'pointer',
@@ -1455,12 +1621,17 @@ class Component extends DCLogic {
       runDisabled: !running && st.runType !== 'break' && liveSubj.length === 0,
       toggleRun: toggleRun,
       showEndSession: !!running && running.type === 'break',
-      endSession: () => this.commit(() => ({ running: null, runType: 'study' })),
+      endSession: () => {
+        const pid = (running && running.profileId) || st.activeId;
+        this.commit(x => ({ running: null, timers: this.putTimer(x.timers, pid, null), runType: 'study' }));
+        this.syncTimer(null, pid);
+      },
 
       manType: st.manType, manSubject: curMan, manSession: st.manSession,
       manFromT: timeField('manFrom', manFromMin, v => this.setState({ manFromMin: v })),
       manToT: timeField('manTo', manToMin, v => this.setState({ manToMin: v })),
-      manSubjectDisabled: st.manType === 'break',
+      manSubjectDisabled: st.manType !== 'study',
+      typeOpts: this.BSEL,
       onManType: e => this.setState({ manType: e.target.value }),
       onManSubject: e => this.setState({ manSubject: e.target.value }),
       onManSession: e => this.setState({ manSession: e.target.value }),
@@ -1489,7 +1660,10 @@ class Component extends DCLogic {
         bg: p.id === st.activeId ? 'var(--surface)' : 'transparent',
         fg: p.id === st.activeId ? 'var(--ink)' : 'var(--muted)',
         underline: p.id === st.activeId ? 'var(--study)' : 'transparent',
-        go: () => this.setState({ activeId: p.id, editSubj: null, confirmSubj: null, confirmProfile: null, renamingProfile: false, manError: '', navOpen: false })
+        go: () => {
+          const r = (this.state.timers || {})[p.id] || null;
+          this.setState({ activeId: p.id, running: r, runType: r ? r.type : 'study', runKind: r && r.type === 'break' ? this.bk(r) : 'rest', editSubj: null, confirmSubj: null, confirmProfile: null, renamingProfile: false, manError: '', navOpen: false }, () => this.persist(this.state));
+        }
       })),
       activeProfile: owner,
       addingProfile: st.addingProfile === true,
@@ -1525,12 +1699,17 @@ class Component extends DCLogic {
       confirmProfileOpen: st.confirmProfile === st.activeId,
       askRemoveProfile: () => this.setState({ confirmProfile: st.activeId, renamingProfile: false }),
       cancelRemoveProfile: () => this.setState({ confirmProfile: null }),
-      removeProfile: () => this.commit(x => {
-        const profiles = x.profiles.filter(p => p.id !== x.activeId);
-        const store = Object.assign({}, x.store);
-        delete store[x.activeId];
-        return { profiles: profiles, store: store, activeId: profiles[0].id, confirmProfile: null, running: null };
-      }),
+      removeProfile: () => {
+        const pid = st.activeId;
+        this.commit(x => {
+          const profiles = x.profiles.filter(p => p.id !== pid);
+          const store = Object.assign({}, x.store);
+          delete store[pid];
+          const timers = this.putTimer(x.timers, pid, null);
+          return { profiles: profiles, store: store, activeId: profiles[0].id, confirmProfile: null, running: timers[profiles[0].id] || null, timers: timers };
+        });
+        this.syncTimer(null, pid);
+      },
       sheetW: (P.reportWidth || 720) + 'px',
       paper: dark ? 'var(--sheet)' : (P.paperTint || '#ffffff'),
       owner: owner, hasOwner: owner.length > 0,
